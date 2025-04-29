@@ -1,9 +1,10 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
+import { Button } from '@/components/shared/button'
 
 export const Navbar = () => {
   return (
     <header className="bg-primary w-full">
-      <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 font-text">
         <div className="flex h-16 items-center justify-between">
           <div className="md:flex md:items-center md:gap-12">
             <a className="block text-gold" href="#">
@@ -19,44 +20,65 @@ export const Navbar = () => {
 
           <div className="hidden md:block">
             <nav aria-label="Global">
-              <ul className="flex items-center gap-6 text-sm">
+              <ul className="flex items-center gap-6 text-[16px]">
                 <li>
-                  <NavLink className="text-primary transition hover:" to="/"> Home </NavLink>
+                  <NavLink 
+                    className={({ isActive }) => 
+                      `transition ${isActive ? 'text-gold font-bold' : 'text-primary hover:text-amber-500'}`
+                    } 
+                    to="/"
+                  > Home 
+                  </NavLink>
                 </li>
 
                 <li>
-                  <a className="text-primary transition hover:" href="#"> About </a>
+                  <NavLink 
+                    className={({ isActive }) => 
+                      `transition ${isActive ? 'text-gold font-bold' : 'text-primary hover:text-amber-500'}`
+                    } 
+                    to="/about"
+                  > About 
+                  </NavLink>
                 </li>
 
                 <li>
-                  <a className="text-primary transition hover:" href="#"> Services </a>
+                  <NavLink 
+                    className={({ isActive }) => 
+                      `transition ${isActive ? 'text-gold font-bold' : 'text-primary hover:text-amber-500'}`
+                    } 
+                    to="/services"
+                  > Services 
+                  </NavLink>
                 </li>
 
                 <li>
-                  <a className="text-primary transition hover:" href="#"> Pricing </a>
+                  <NavLink 
+                    className={({ isActive }) => 
+                      `transition hover:text-gold ${isActive ? 'text-gold font-bold' : 'text-primary hover:text-amber-500'}`
+                    } 
+                    to="/pricing"
+                  > Pricing 
+                  </NavLink>
                 </li>
-
               </ul>
             </nav>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="sm:flex sm:gap-4">
-              <a
-                className="rounded-md bg-gold px-5 py-2.5 text-sm font-medium text-white shadow-sm"
-                href="#"
-              >
-                Booking
-              </a>
+              <Link to='/' className='hidden sm:flex'>
+                <Button 
+                  label="Book Now" 
+                  variant="primary" 
+                />
+              </Link>
 
-              <div className="hidden sm:flex">
-                <a
-                  className="rounded-md px-5 border border-color py-2.5 text-sm font-medium text-gold"
-                  href="#"
-                >
-                  Login
-                </a>
-              </div>
+              <Link to='/' className='hidden sm:flex'>
+                <Button 
+                  label="Login" 
+                  variant="outline" 
+                />
+              </Link>
             </div>
 
             <div className="block md:hidden">

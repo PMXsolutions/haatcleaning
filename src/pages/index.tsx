@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'
 import { Button } from '@/components/shared/button'
 
 const Home: React.FC = () => {
@@ -6,10 +7,10 @@ const Home: React.FC = () => {
     <main className="w-full overflow-hidden">
 
       {/* hero content */}
-      <section className='relative w-full h-screen'>
-        <div className="absolute inset-0 bg-black/30">
+      <section className='relative w-full h-[80vh] overflow-hidden rounded-3xl'>
+        <div className="absolute inset-0">
           <img 
-            src="/cleaning-background.jpg" 
+            src="/images/hero-bg.jpg" 
             alt="Cleaning Service" 
             className="w-full h-full object-cover"
           />
@@ -23,11 +24,22 @@ const Home: React.FC = () => {
             </h1>
             <p className="text-sm uppercase tracking-wider mb-2">COMMITTED TO TOP QUALITY SERVICE</p>
             
-            <Button 
-              label="BOOK NOW" 
-              variant="primary" 
-              onClick={() => console.log('Sign up clicked')}
-            />
+            <div className='flex justify-center gap-4 mt-4'>
+              <Link to='/'>
+                <Button 
+                  label="Book Now" 
+                  variant="primary" 
+                />
+              </Link>
+
+              <Link to='/'>
+                <Button 
+                  label="Check Our Services" 
+                  variant="outline" 
+                />
+              </Link>
+
+            </div>
           </div>
         </div>
       </section>

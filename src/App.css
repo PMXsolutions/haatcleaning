@@ -21,12 +21,6 @@
     --ring: hsl(35 85% 55%);
     --radius: 0.5rem;
 
-    /* Radius variables */
-    --radius-sm: calc(var(--radius) - 0.125rem);
-    --radius-md: calc(var(--radius) - 0.0625rem);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) + 0.125rem);
-
     --font-heading: 'Montserrat', sans-serif;
     --font-body: 'Roboto', sans-serif;
   }
@@ -40,6 +34,7 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap'); */
 
 @layer utilities {
+  /* Background Colors */
   .bg-primary {
     background-color: var(--background);
   }
@@ -47,27 +42,28 @@
     background-color: var(--primary);
   }
 
+  /* Text Colors */
   .text-gold {
     color: var(--primary);
   }
-
   .text-primary {
     color: var(--foreground);
   }
-
   .text-white {
     color: var(--primary-foreground);
   }
 
+  /* Font Families */
   .font-text {
     font-family: var(--font-body);
   }
-
   .font-heading {
     font-family: var(--font-heading);
   }
 
+  /* Border Color */
   .border-color {
     border-color: var(--primary);
   }
+
 }
