@@ -1,9 +1,25 @@
+import { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom'
+import { RxActivityLog, RxCross1 } from "react-icons/rx";
+
 import { Button } from '@/components/shared/button'
 
+const navLinks = [
+  { name: 'Home', path: '/' },
+  { name: 'About', path: '/about' },
+  { name: 'Services', path: '/services' },
+  { name: 'Pricing', path: '/pricing' },
+];
+
 export const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
+
   return (
-    <header className="bg-primary w-full">
+    <header className="bg-primary w-full relative z-40">
       <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 font-text">
         <div className="flex h-16 items-center justify-between">
           <div className="md:flex md:items-center md:gap-12">
@@ -18,62 +34,36 @@ export const Navbar = () => {
             </a>
           </div>
 
+
           <div className="hidden md:block">
             <nav aria-label="Global">
               <ul className="flex items-center gap-6 text-[16px]">
-                <li>
-                  <NavLink 
-                    className={({ isActive }) => 
-                      `transition ${isActive ? 'text-gold font-bold' : 'text-primary hover:text-amber-500'}`
-                    } 
-                    to="/"
-                  > Home 
-                  </NavLink>
-                </li>
-
-                <li>
-                  <NavLink 
-                    className={({ isActive }) => 
-                      `transition ${isActive ? 'text-gold font-bold' : 'text-primary hover:text-amber-500'}`
-                    } 
-                    to="/about"
-                  > About 
-                  </NavLink>
-                </li>
-
-                <li>
-                  <NavLink 
-                    className={({ isActive }) => 
-                      `transition ${isActive ? 'text-gold font-bold' : 'text-primary hover:text-amber-500'}`
-                    } 
-                    to="/services"
-                  > Services 
-                  </NavLink>
-                </li>
-
-                <li>
-                  <NavLink 
-                    className={({ isActive }) => 
-                      `transition hover:text-gold ${isActive ? 'text-gold font-bold' : 'text-primary hover:text-amber-500'}`
-                    } 
-                    to="/pricing"
-                  > Pricing 
-                  </NavLink>
-                </li>
+                {navLinks.map((link) => (
+                  <li key={link.path}>
+                    <NavLink 
+                      className={({ isActive }) => 
+                        `transition hover:text-gold ${isActive ? 'text-gold font-bold' : 'text-primary'}`
+                      } 
+                      to={link.path}
+                    >
+                      {link.name}
+                    </NavLink>
+                  </li>
+                ))}
               </ul>
             </nav>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="sm:flex sm:gap-4">
-              <Link to='/' className='hidden sm:flex'>
+              <Link to='/' className='hidden md:flex'>
                 <Button 
                   label="Book Now" 
                   variant="primary" 
                 />
               </Link>
 
-              <Link to='/' className='hidden sm:flex'>
+              <Link to='/' className='hidden md:flex'>
                 <Button 
                   label="Login" 
                   variant="outline" 
@@ -83,23 +73,81 @@ export const Navbar = () => {
 
             <div className="block md:hidden">
               <button
-                className="rounded-sm bg-gray-100 p-2 text-gray-600 transition hover:text-gray-600/75"
+                onClick={toggleMenu}
+                className="rounded- text-2xl p-2 text-gold transition"
+                aria-expanded={isMenuOpen}
+                aria-label="Toggle menu"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="size-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+                <RxActivityLog />
               </button>
             </div>
           </div>
         </div>
       </div>
+  
+        {/* Mobile Menu */}
+      <div 
+        className={`fixed top-0 right-0 h-full w-[70%] bg-primary z-50 shadow-lg transform transition-transform duration-300 ease-in-out ${
+          isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="flex justify-end p-4">
+          <button
+            onClick={toggleMenu}
+            className="p-2 text-gold hover:text-white transition"
+            aria-label="Close menu"
+          >
+            <RxCross1 />
+          </button>
+        </div>
+        <nav className="px-4 py-3 font-text">
+          <ul className="space-y-6 text-center">
+            {navLinks.map((link) => (
+              <li key={link.path}>
+                <NavLink 
+                  className={({ isActive }) => 
+                    `transition hover:text-gold ${isActive ? 'text-gold font-bold' : 'text-primary'}`
+                  } 
+                  to={link.path}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.name}
+                </NavLink>
+              </li>
+            ))}
+            <li className="flex flex-col gap-3 pt-6">
+              <Link 
+                to="/" 
+                className="w-full"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Button 
+                  label="Login" 
+                  variant="outline"
+                />
+              </Link>
+              <Link 
+                to="/" 
+                className="w-full"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Button 
+                  label="Book Now" 
+                  variant="primary"
+                />
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      
+      {/* Overlay */}
+      {isMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black opacity-50 z-40"
+          onClick={toggleMenu}
+        ></div>
+      )}
     </header>
   )
 }

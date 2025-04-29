@@ -1,5 +1,6 @@
 import './App.css'
 import { Navbar } from '@/components/shared/navbar'
+import { Footer } from '@/components/shared/footer'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/index';
 
@@ -17,7 +18,7 @@ function App() {
             {/* Add more routes as needed */}
           </Routes>
         </main>
-        {/* <Footer /> */}
+        <Footer />
       </div>
     </BrowserRouter>
   )

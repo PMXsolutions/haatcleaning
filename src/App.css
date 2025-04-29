@@ -53,6 +53,14 @@
     color: var(--primary-foreground);
   }
 
+  /* hovers */
+  .hover\:text-gold:hover {
+    color: var(--primary);
+  }
+  .hover\:bg-gold:hover {
+    background-color: var(--primary);
+  }
+
   /* Font Families */
   .font-text {
     font-family: var(--font-body);

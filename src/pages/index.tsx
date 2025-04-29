@@ -19,10 +19,10 @@ const Home: React.FC = () => {
         {/* Content Container */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
           <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-8">
-              Quality cleaning, tailored to your needs
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4">
+              Quality cleaning, tailored to your needs.
             </h1>
-            <p className="text-sm uppercase tracking-wider mb-2">COMMITTED TO TOP QUALITY SERVICE</p>
+            <p className="text-2xl mb-2 font-bold max-w-xl mx-auto">Expert cleaning services for homes and businesses. Fast, reliable, and tailored to your needs.</p>
             
             <div className='flex justify-center gap-4 mt-4'>
               <Link to='/'>

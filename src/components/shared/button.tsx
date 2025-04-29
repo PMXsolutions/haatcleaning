@@ -1,5 +1,4 @@
 
-
 interface ButtonProps {
   label: string;
   onClick?: () => void;
@@ -13,12 +12,12 @@ export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   className = ''
 }) => {
-  const baseClasses = 'px-6 py-2 rounded-full font-medium transition-all duration-300 border border-amber-500 cursor-pointer';
+  const baseClasses = 'px-6 py-2 rounded-full font-medium transition-all duration-300 border border-color cursor-pointer';
   
   const variantClasses = {
-    primary: 'bg-amber-500 hover:bg-white text-white hover:text-amber-500',
+    primary: 'bg-gold hover:bg-white text-white hover:text-gold',
     
-    outline: 'bg-white hover:bg-amber-500 text-amber-500 hover:text-white'
+    outline: 'bg-white hover:bg-gold text-gold hover:text-white'
   };
   
   return (
