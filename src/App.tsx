@@ -1,12 +1,25 @@
 import './App.css'
 import { Navbar } from '@/components/shared/navbar'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/index';
 
 function App() {
 
   return (
-    <>
-      <Navbar />
-    </>
+    <BrowserRouter>
+      <div className="bg-primary max-w-screen-xl">
+        <Navbar />
+        <main className="">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {/* <Route path="/about" element={<About />} /> */}
+            {/* <Route path="/contact" element={<Contact />} /> */}
+            {/* Add more routes as needed */}
+          </Routes>
+        </main>
+        {/* <Footer /> */}
+      </div>
+    </BrowserRouter>
   )
 }
 

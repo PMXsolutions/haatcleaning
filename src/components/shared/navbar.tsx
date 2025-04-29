@@ -1,11 +1,12 @@
+import { NavLink } from 'react-router-dom'
 
 export const Navbar = () => {
   return (
-    <header className="bg-[hsl(var(--color-card))]">
+    <header className="bg-primary w-full">
       <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="md:flex md:items-center md:gap-12">
-            <a className="block text-teal-600" href="#">
+            <a className="block text-gold" href="#">
               <span className="sr-only">Home</span>
               <svg className="h-8" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -20,28 +21,21 @@ export const Navbar = () => {
             <nav aria-label="Global">
               <ul className="flex items-center gap-6 text-sm">
                 <li>
-                  <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> About </a>
+                  <NavLink className="text-primary transition hover:" to="/"> Home </NavLink>
                 </li>
 
                 <li>
-                  <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Careers </a>
+                  <a className="text-primary transition hover:" href="#"> About </a>
                 </li>
 
                 <li>
-                  <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> History </a>
+                  <a className="text-primary transition hover:" href="#"> Services </a>
                 </li>
 
                 <li>
-                  <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Services </a>
+                  <a className="text-primary transition hover:" href="#"> Pricing </a>
                 </li>
 
-                <li>
-                  <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Projects </a>
-                </li>
-
-                <li>
-                  <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Blog </a>
-                </li>
               </ul>
             </nav>
           </div>
@@ -49,18 +43,18 @@ export const Navbar = () => {
           <div className="flex items-center gap-4">
             <div className="sm:flex sm:gap-4">
               <a
-                className="rounded-md bg-teal-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm"
+                className="rounded-md bg-gold px-5 py-2.5 text-sm font-medium text-white shadow-sm"
                 href="#"
               >
-                Login
+                Booking
               </a>
 
               <div className="hidden sm:flex">
                 <a
-                  className="rounded-md bg-gray-100 px-5 py-2.5 text-sm font-medium text-teal-600"
+                  className="rounded-md px-5 border border-color py-2.5 text-sm font-medium text-gold"
                   href="#"
                 >
-                  Register
+                  Login
                 </a>
               </div>
             </div>
