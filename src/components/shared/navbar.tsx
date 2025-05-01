@@ -63,7 +63,7 @@ export const Navbar = () => {
                 />
               </Link>
 
-              <Link to='/' className='hidden md:flex'>
+              <Link to='/login' className='hidden md:flex'>
                 <Button 
                   label="Login" 
                   variant="outline" 
