@@ -1,29 +1,106 @@
-import { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom'
+import { useState, useEffect  } from 'react';
+import { Link } from 'react-router-dom'
 import { RxActivityLog, RxCross1 } from "react-icons/rx";
 
 import { Button } from '@/components/shared/button'
 
-const navLinks = [
+interface NavLink {
+  name: string;
+  path: string;
+}
+
+const navLinks: NavLink[] = [
   { name: 'Home', path: '/' },
-  { name: 'About', path: '/about' },
-  { name: 'Services', path: '/services' },
-  { name: 'Pricing', path: '/pricing' },
+  { name: 'About', path: '#about' },
+  { name: 'Services', path: '#services' },
+  { name: 'Pricing', path: '#pricing' },
+  { name: 'Contact Us', path: '#contact' },
 ];
 
 export const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [activeSection, setActiveSection] = useState<string>('');
 
-  const toggleMenu = () => {
+  const toggleMenu = (): void => {
     setIsMenuOpen(!isMenuOpen)
   }
 
+  // Function to scroll to section smoothly when link is clicked
+  const scrollToSection = (sectionPath: string) => {
+    // Only process sections that start with #
+    if (sectionPath.startsWith('#')) {
+      const sectionId = sectionPath.substring(1); // Remove the # from the ID
+      const element = document.getElementById(sectionId);
+      
+      if (element) {
+        // Close menu if open
+        if (isMenuOpen) setIsMenuOpen(false);
+        
+        // Scroll smoothly to the element
+        element.scrollIntoView({ behavior: 'smooth' });
+        
+        // Update URL with hash without causing a page jump
+        window.history.pushState({}, '', sectionPath);
+        
+        // Set active section
+        setActiveSection(sectionPath);
+      }
+    } else {
+      // For non-hash links (like '/pricing'), we'll just update the active section
+      setActiveSection(sectionPath);
+      if (isMenuOpen) setIsMenuOpen(false);
+    }
+  };
+
+  // Function to check which section is currently in view
+  useEffect(() => {
+    const handleScroll = (): void => {
+      const scrollPosition = window.scrollY + 100; // Offset for navbar height
+      
+      // Check each section to see if it's in view
+      navLinks.forEach(({ path }) => {
+        // const sectionId = path.substring(1); // Remove the # from the ID
+        // const element = document.getElementById(sectionId);
+        if (path.startsWith('#')) {
+          const sectionId = path.substring(1); // Remove the # from the ID
+          const element: HTMLElement | null = document.getElementById(sectionId);
+          
+          if (element) {
+            const { offsetTop, offsetHeight } = element;
+            if (
+              scrollPosition >= offsetTop && 
+              scrollPosition < offsetTop + offsetHeight
+            ) {
+              setActiveSection(path);
+            }
+          }
+        }
+      });
+    };
+
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Check active section on initial load
+    handleScroll();
+    
+    // Clean up
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className="bg-primary w-full relative z-40">
+    <header className="bg-primary w-full sticky top-0 z-40 border-b border-color">
       <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 font-text">
         <div className="flex h-16 items-center justify-between">
           <div className="md:flex md:items-center md:gap-12">
-            <a className="block text-gold" href="#">
+            <a 
+              className="block text-gold" 
+              href="#home"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection('#home');
+              }}
+            >
               <span className="sr-only">Home</span>
               <svg className="h-8" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -40,20 +117,22 @@ export const Navbar = () => {
               <ul className="flex items-center gap-6 text-[16px]">
                 {navLinks.map((link) => (
                   <li key={link.path}>
-                    <NavLink 
-                      className={({ isActive }) => 
-                        `transition hover:text-gold ${isActive ? 'text-gold font-bold' : 'text-primary'}`
-                      } 
-                      to={link.path}
+                    <a 
+                      className={`transition hover:text-gold cursor-pointer ${activeSection === link.path ? 'text-gold font-bold' : 'text-primary'}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        scrollToSection(link.path);
+                      }}
                     >
                       {link.name}
-                    </NavLink>
+                    </a>
                   </li>
                 ))}
               </ul>
             </nav>
           </div>
 
+          {/* Desktop Buttons */}
           <div className="flex items-center gap-4">
             <div className="sm:flex sm:gap-4">
               <Link to='/' className='hidden md:flex'>
@@ -104,15 +183,15 @@ export const Navbar = () => {
           <ul className="space-y-6 text-center">
             {navLinks.map((link) => (
               <li key={link.path}>
-                <NavLink 
-                  className={({ isActive }) => 
-                    `transition hover:text-gold ${isActive ? 'text-gold font-bold' : 'text-primary'}`
-                  } 
-                  to={link.path}
-                  onClick={() => setIsMenuOpen(false)}
+                <a 
+                  className={`transition hover:text-gold cursor-pointer ${activeSection === link.path ? 'text-gold font-bold' : 'text-primary'}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection(link.path);
+                  }}
                 >
                   {link.name}
-                </NavLink>
+                </a>
               </li>
             ))}
             <li className="flex flex-col gap-3 pt-6">

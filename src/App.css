@@ -1,8 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body: 'Roboto', sans-serif;
+}
 
 @layer base {
   :root {
-    --background: hsl(0 0% 96%);
+    --background: hsl(0 0% 100%);
     --foreground: hsl(0 0% 10%);
     --card: hsl(0 0% 100%);
     --card-foreground: hsl(0 0% 10%);
@@ -21,8 +30,7 @@
     --ring: hsl(35 85% 55%);
     --radius: 0.5rem;
 
-    --font-heading: 'Montserrat', sans-serif;
-    --font-body: 'Roboto', sans-serif;
+    
   }
 
   body {
@@ -31,7 +39,6 @@
   }
 }
 
-/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap'); */
 
 @layer utilities {
   /* Background Colors */
@@ -40,6 +47,9 @@
   }
   .bg-gold {
     background-color: var(--primary);
+  }
+  .bg-muted {
+    background-color: var(--muted);
   }
 
   /* Text Colors */
@@ -73,5 +83,7 @@
   .border-color {
     border-color: var(--primary);
   }
-
+  .border-white {
+    border-color: var(--background);
+  }
 }

@@ -2,6 +2,7 @@
 interface ButtonProps {
   label: string;
   onClick?: () => void;
+  disabled?: boolean;
   variant?: 'primary' | 'outline';
   className?: string;
 }
@@ -9,6 +10,7 @@ interface ButtonProps {
 export const Button: React.FC<ButtonProps> = ({ 
   label, 
   onClick, 
+  disabled,
   variant = 'primary',
   className = ''
 }) => {
@@ -23,6 +25,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className={`${baseClasses} ${variantClasses[variant]} ${className}`}
     >
       {label}
