@@ -3,6 +3,7 @@ import { Navbar } from '@/components/shared/navbar'
 import { Footer } from '@/components/shared/footer'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/index';
+// import About from './pages/about';
 
 function App() {
 
