@@ -1,69 +1,97 @@
-import { useState, useEffect  } from 'react';
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Keep this import as it's in your original code
 import { RxActivityLog, RxCross1 } from "react-icons/rx";
 
-import { Button } from '@/components/shared/button'
+import { Button } from '@/components/shared/button';
 
 interface NavLink {
   name: string;
   path: string;
+  sectionId?: string;
+  isExternal?: boolean;
 }
 
 const navLinks: NavLink[] = [
-  { name: 'Home', path: '/' },
-  { name: 'About', path: '#about' },
-  { name: 'Services', path: '#services' },
-  { name: 'Pricing', path: '#pricing' },
-  { name: 'Contact Us', path: '#contact' },
+  { name: 'Home', path: '/', sectionId: 'home' }, // Using path for page navigation and sectionId for scrolling
+  { name: 'About', path: '/#about', sectionId: 'about' },
+  { name: 'Services', path: '/#services', sectionId: 'services' },
+  { name: 'Pricing', path: '/#pricing', sectionId: 'pricing' },
+  { name: 'Contact Us', path: '/#contact', sectionId: 'contact' },
 ];
 
 export const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [activeSection, setActiveSection] = useState<string>('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
 
   const toggleMenu = (): void => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
 
-  // Function to scroll to section smoothly when link is clicked
-  const scrollToSection = (sectionPath: string) => {
-    // Only process sections that start with #
-    if (sectionPath.startsWith('#')) {
-      const sectionId = sectionPath.substring(1); // Remove the # from the ID
+  // Function to handle navigation or scrolling when link is clicked
+  const handleNavigation = (link: NavLink) => {
+    const { path, sectionId } = link;
+    const isCurrentPage = window.location.pathname === '/' || window.location.pathname === '';
+    
+    // Close menu if open
+    if (isMenuOpen) setIsMenuOpen(false);
+    
+    // Case 1: We're on the home page and need to scroll to a section
+    if (isCurrentPage && sectionId) {
       const element = document.getElementById(sectionId);
       
       if (element) {
-        // Close menu if open
-        if (isMenuOpen) setIsMenuOpen(false);
-        
         // Scroll smoothly to the element
         element.scrollIntoView({ behavior: 'smooth' });
         
         // Update URL with hash without causing a page jump
-        window.history.pushState({}, '', sectionPath);
+        window.history.pushState({}, '', path);
         
-        // Set active section
-        setActiveSection(sectionPath);
+        // Set active section based on path
+        setActiveSection(path);
       }
-    } else {
-      // For non-hash links (like '/pricing'), we'll just update the active section
-      setActiveSection(sectionPath);
-      if (isMenuOpen) setIsMenuOpen(false);
+      return;
+    }
+    
+    // Case 2: We need to navigate to the home page and then scroll to a section
+    if (!isCurrentPage && path.includes('#')) {
+      // Store the target section in sessionStorage to retrieve after page navigation
+      if (sectionId) {
+        sessionStorage.setItem('scrollToSection', sectionId);
+      }
+      
+      // Navigate to the home page
+      window.location.href = path;
+      return;
+    }
+    
+    // Case 3: Simple page navigation with no section scrolling
+    if (path !== window.location.pathname) {
+      window.location.href = path;
+      return;
+    }
+    
+    // Case 4: Home page navigation from home (scroll to top)
+    if (path === '/' && isCurrentPage) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setActiveSection(path);
     }
   };
 
-  // Function to check which section is currently in view
+  // Function to check which section is currently in view and handle initial section scrolling
   useEffect(() => {
     const handleScroll = (): void => {
       const scrollPosition = window.scrollY + 100; // Offset for navbar height
       
+      // Check if we're at the top for home section
+      if (scrollPosition < 200) {
+        setActiveSection('/');
+        return;
+      }
+      
       // Check each section to see if it's in view
-      navLinks.forEach(({ path }) => {
-        // const sectionId = path.substring(1); // Remove the # from the ID
-        // const element = document.getElementById(sectionId);
-        if (path.startsWith('#')) {
-          const sectionId = path.substring(1); // Remove the # from the ID
-          const element: HTMLElement | null = document.getElementById(sectionId);
+      navLinks.forEach(({ path, sectionId }) => {
+        if (sectionId) {
+          const element = document.getElementById(sectionId);
           
           if (element) {
             const { offsetTop, offsetHeight } = element;
@@ -78,8 +106,46 @@ export const Navbar = () => {
       });
     };
 
+    // Check if we should scroll to a section on page load
+    const checkForHashAndScroll = () => {
+      // First, check URL hash
+      const hash = window.location.hash;
+      if (hash) {
+        const sectionId = hash.substring(1);
+        const element = document.getElementById(sectionId);
+        
+        if (element) {
+          // Use a small timeout to ensure the page is fully loaded
+          setTimeout(() => {
+            element.scrollIntoView({ behavior: 'smooth' });
+            setActiveSection(`/#${sectionId}`);
+          }, 100);
+        }
+        return;
+      }
+      
+      // Then check sessionStorage (for cross-page navigation)
+      const storedSection = sessionStorage.getItem('scrollToSection');
+      if (storedSection) {
+        const element = document.getElementById(storedSection);
+        
+        if (element) {
+          // Use a small timeout to ensure the page is fully loaded
+          setTimeout(() => {
+            element.scrollIntoView({ behavior: 'smooth' });
+            setActiveSection(`/#${storedSection}`);
+            // Clear the stored section after use
+            sessionStorage.removeItem('scrollToSection');
+          }, 100);
+        }
+      }
+    };
+
     // Add scroll event listener
     window.addEventListener('scroll', handleScroll);
+    
+    // Check for hash or stored section on initial load
+    checkForHashAndScroll();
     
     // Check active section on initial load
     handleScroll();
@@ -95,10 +161,10 @@ export const Navbar = () => {
           <div className="md:flex md:items-center md:gap-12">
             <a 
               className="block text-gold" 
-              href="#home"
+              href="/"
               onClick={(e) => {
                 e.preventDefault();
-                scrollToSection('#home');
+                handleNavigation({ name: 'Home', path: '/', sectionId: 'home' });
               }}
             >
               <span className="sr-only">Home</span>
@@ -119,9 +185,10 @@ export const Navbar = () => {
                   <li key={link.path}>
                     <a 
                       className={`transition hover:text-gold cursor-pointer ${activeSection === link.path ? 'text-gold font-bold' : 'text-primary'}`}
+                      href={link.path}
                       onClick={(e) => {
                         e.preventDefault();
-                        scrollToSection(link.path);
+                        handleNavigation(link);
                       }}
                     >
                       {link.name}
@@ -135,14 +202,14 @@ export const Navbar = () => {
           {/* Desktop Buttons */}
           <div className="flex items-center gap-4">
             <div className="sm:flex sm:gap-4">
-              <Link to='/' className='hidden md:flex'>
+              <Link to="/" className="hidden md:flex">
                 <Button 
                   label="Book Now" 
                   variant="primary" 
                 />
               </Link>
 
-              <Link to='/login' className='hidden md:flex'>
+              <Link to="/login" className="hidden md:flex">
                 <Button 
                   label="Login" 
                   variant="outline" 
@@ -185,9 +252,10 @@ export const Navbar = () => {
               <li key={link.path}>
                 <a 
                   className={`transition hover:text-gold cursor-pointer ${activeSection === link.path ? 'text-gold font-bold' : 'text-primary'}`}
+                  href={link.path}
                   onClick={(e) => {
                     e.preventDefault();
-                    scrollToSection(link.path);
+                    handleNavigation(link);
                   }}
                 >
                   {link.name}
@@ -196,7 +264,7 @@ export const Navbar = () => {
             ))}
             <li className="flex flex-col gap-3 pt-6">
               <Link 
-                to="/" 
+                to="/login" 
                 className="w-full"
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -228,5 +296,5 @@ export const Navbar = () => {
         ></div>
       )}
     </header>
-  )
-}
+  );
+};

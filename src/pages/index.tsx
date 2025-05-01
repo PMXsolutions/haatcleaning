@@ -13,7 +13,7 @@ import ContactUs from '@/components/shared/contact'
 
 const Home: React.FC = () => {
   return (
-    <main className="w-full overflow-hidden">
+    <main className="w-full overflow-hidden" id="home">
 
       {/* hero content */}
       <section className='relative w-full h-[80vh] overflow-hidden rounded-3xl mt-6'>
