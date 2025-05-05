@@ -3,8 +3,9 @@ import { Navbar } from '@/components/shared/navbar'
 import { Footer } from '@/components/shared/footer'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/index';
-
+import { BookingPage } from './pages/booking';
 import Login from './pages/Login';
+import AdminDashboard from './pages/AdminDashboard';
 // import About from './pages/about'
 
 function App() {
@@ -19,6 +20,8 @@ function App() {
             {/* <Route path="/about" element={<About />} /> */}
             {/* <Route path="/contact" element={<Contact />} /> */}
             {/* Add more routes as needed */}
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/booking" element={<BookingPage />} />
             <Route path="/login" element={<Login />} />
           </Routes>
         </main>

@@ -62,7 +62,7 @@ const Login = () => {
             label="Login"
             variant="primary"
             className="w-full p-3 bg-gold text-white rounded-full text-lg font-medium hover:opacity-90 transition"
-           />
+          />
 
           {/* <button
             type="submit"

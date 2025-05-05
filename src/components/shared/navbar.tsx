@@ -17,6 +17,7 @@ const navLinks: NavLink[] = [
   { name: 'Services', path: '/#services', sectionId: 'services' },
   { name: 'Pricing', path: '/#pricing', sectionId: 'pricing' },
   { name: 'Contact Us', path: '/#contact', sectionId: 'contact' },
+  { name: 'Admin', path: '/admin' },
 ];
 
 export const Navbar = () => {
@@ -202,7 +203,7 @@ export const Navbar = () => {
           {/* Desktop Buttons */}
           <div className="flex items-center gap-4">
             <div className="sm:flex sm:gap-4">
-              <Link to="/" className="hidden md:flex">
+              <Link to="/booking" className="hidden md:flex">
                 <Button 
                   label="Book Now" 
                   variant="primary" 
@@ -274,7 +275,7 @@ export const Navbar = () => {
                 />
               </Link>
               <Link 
-                to="/" 
+                to="/booking" 
                 className="w-full"
                 onClick={() => setIsMenuOpen(false)}
               >

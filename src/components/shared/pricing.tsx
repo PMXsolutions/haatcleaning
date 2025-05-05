@@ -26,7 +26,7 @@ export const Pricing = () => {
         '6 hours of cleaning',
         'Up to 4 cleaning tasks'
       ],
-      highlighted: false
+      highlighted: true
     },
     {
       title: 'DELUXE',
@@ -38,7 +38,7 @@ export const Pricing = () => {
         '12 hours of cleaning',
         'Up to 10 cleaning tasks'
       ],
-      highlighted: true
+      highlighted: false
     }
   ];
 
