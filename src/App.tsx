@@ -5,7 +5,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/index';
 import { BookingPage } from './pages/booking';
 import Login from './pages/Login';
+import SignUp from './pages/signUp';
 import AdminDashboard from './pages/AdminDashboard';
+import ContactUsPage from './pages/contactUs'
 // import About from './pages/about'
 
 function App() {
@@ -17,12 +19,11 @@ function App() {
         <main className="">
           <Routes>
             <Route path="/" element={<Home />} />
-            {/* <Route path="/about" element={<About />} /> */}
-            {/* <Route path="/contact" element={<Contact />} /> */}
-            {/* Add more routes as needed */}
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/booking" element={<BookingPage />} />
+            <Route path="/contactUs" element={<ContactUsPage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/signUp" element={<SignUp />} />
           </Routes>
         </main>
         <Footer />

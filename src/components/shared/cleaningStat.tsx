@@ -1,8 +1,8 @@
 // import { useState, useEffect,  } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/shared/button'
-import { StatBox } from '@/components/shared/statBox'
-import { FaSprayCanSparkles, FaUsers, FaFaceSmile } from "react-icons/fa6";
+// import { StatBox } from '@/components/shared/statBox'
+// import { FaSprayCanSparkles, FaUsers, FaFaceSmile } from "react-icons/fa6";
 
 export const CleaningServicesHero = () => {
   // const [isVisible, setIsVisible] = useState(false);
@@ -11,26 +11,26 @@ export const CleaningServicesHero = () => {
   //   setIsVisible(true);
   // }, []);
 
-  const stats = [
-    {
-      icon: <FaSprayCanSparkles className="w-8 h-8 md:w-14 md:h-14 text-gold" />,
-      value: '12,540+',
-      label: 'Jobs done',
-      animationDuration: 2.5,
-    },
-    {
-      icon: <FaUsers className="w-8 h-8 md:w-14 md:h-14 text-gold" />,
-      value: '100+',
-      label: 'Team members',
-      animationDuration: 2.0,
-    },
-    {
-      icon: <FaFaceSmile className="w-8 h-8 md:w-14 md:h-14 text-gold" />,
-      value: '3,780+',
-      label: 'Happy clients',
-      animationDuration: 2.2,
-    }
-  ];
+  // const stats = [
+  //   {
+  //     icon: <FaSprayCanSparkles className="w-8 h-8 md:w-14 md:h-14 text-gold" />,
+  //     value: '12,540+',
+  //     label: 'Jobs done',
+  //     animationDuration: 2.5,
+  //   },
+  //   {
+  //     icon: <FaUsers className="w-8 h-8 md:w-14 md:h-14 text-gold" />,
+  //     value: '100+',
+  //     label: 'Team members',
+  //     animationDuration: 2.0,
+  //   },
+  //   {
+  //     icon: <FaFaceSmile className="w-8 h-8 md:w-14 md:h-14 text-gold" />,
+  //     value: '3,780+',
+  //     label: 'Happy clients',
+  //     animationDuration: 2.2,
+  //   }
+  // ];
 
   return (
     <div className="w-full py-18">
@@ -53,7 +53,7 @@ export const CleaningServicesHero = () => {
             />
           </div>
           
-          <div className="relative sm:absolute sm:bottom-4 sm:translate-y-1/2 sm:w-full">
+          {/* <div className="relative sm:absolute sm:bottom-4 sm:translate-y-1/2 sm:w-full">
             <div className="flex flex-col sm:flex-row justify-center gap-4 px-14">
             {stats.map((stat, index) => (
                 <StatBox 
@@ -66,11 +66,11 @@ export const CleaningServicesHero = () => {
                 />
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
         
-        <div className="flex justify-center sm:mt-32">
-          <Link to='/'>
+        <div className="flex justify-center sm:mt-8">
+          <Link to='/booking'>
             <Button 
               label="Book Now" 
               variant="primary" 

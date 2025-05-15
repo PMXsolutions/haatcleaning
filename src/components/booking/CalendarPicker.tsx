@@ -31,7 +31,7 @@ export const CalendarPicker: React.FC<CalendarPickerProps> = ({
         fixedWeeks
         fromDate={new Date()}
         modifiersClassNames={{
-          selected: '!bg-amber-500 !text-white font-medium',
+          selected: '!bg-[#8A7C3D] !text-white font-medium',
           disabled: '!text-gray-400 !line-through',
           today: '!border-blue-200 !font-bold'
         }}

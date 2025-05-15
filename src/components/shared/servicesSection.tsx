@@ -1,7 +1,9 @@
 import React from 'react';
 // import { Link } from 'react-router-dom'
 // import { Button } from '@/components/shared/button'
+import { useEffect, useState } from 'react';
 import { ServiceCard } from '@/components/shared/serviceCard';
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export const ServicesSection: React.FC = () => {
   const services = [
@@ -99,6 +101,84 @@ export const ServicesSection: React.FC = () => {
   
   ];
 
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [slidesToShow, setSlidesToShow] = useState(3)
+  const [touchStart, setTouchStart] = useState<number | null>(null)
+  const [touchEnd, setTouchEnd] = useState<number | null>(null)
+
+  // update slides to show based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setSlidesToShow(1)
+      } else if (window.innerWidth < 1024) {
+        setSlidesToShow(2)
+      } else {
+        setSlidesToShow(3)
+      }
+    }
+
+    handleResize() 
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  const totalSlides = services.length
+  const maxIndex = totalSlides - slidesToShow
+
+  const nextSlide = () => {
+    setCurrentIndex((prevIndex) => (prevIndex >= maxIndex ? 0 : prevIndex + 1))
+  }
+
+  const prevSlide = () => {
+    setCurrentIndex((prevIndex) => (prevIndex <= 0 ? maxIndex : prevIndex - 1))
+  }
+
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index)
+  }
+
+  // handle touch events for swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > 50
+    const isRightSwipe = distance < -50
+
+    if (isLeftSwipe) {
+      nextSlide()
+    } else if (isRightSwipe) {
+      prevSlide()
+    }
+
+    setTouchStart(null)
+    setTouchEnd(null)
+  }
+
+  // auto-advance the carousel every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide()
+    }, 5000)
+
+    return () => clearInterval(interval)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex]);
+
+  // width of each slide including gap
+  const slideWidth = 100 / slidesToShow
+  const gapPercentage = 2 
+  const adjustedSlideWidth = slideWidth - (gapPercentage * (slidesToShow - 1)) / slidesToShow
+
+
   return (
     <div className="bg-gold px-6 py-16 rounded-xl">
       <div className="w-full mx-auto">
@@ -107,15 +187,9 @@ export const ServicesSection: React.FC = () => {
             Take a look at our<br />
             professional services
           </h2>
-          {/* <Link to='/' className='hidden md:block'>
-            <Button 
-              label="Browse All Services" 
-              variant="outline" 
-            />
-          </Link> */}
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {services.map((service, index) => (
             <ServiceCard 
               key={index}
@@ -124,14 +198,69 @@ export const ServicesSection: React.FC = () => {
               description={service.description}
             />
           ))}
+        </div> */}
+
+        <div className="relative">
+          {/* carousel navigation buttons */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-all focus:outline-none focus:ring-2 focus:ring-gold sm:flex hidden"
+            aria-label="Previous slide"
+          >
+            <FaChevronLeft className="h-6 w-6 text-gold" />
+          </button>
+
+          <button
+            onClick={nextSlide}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-all focus:outline-none focus:ring-2 focus:ring-gold sm:flex hidden"
+            aria-label="Next slide"
+          >
+            <FaChevronRight className="h-6 w-6 text-gold" />
+          </button>
+
+          {/* Carousel Container */}
+          <div
+            className="overflow-hidden px-4"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{
+                transform: `translateX(-${currentIndex * (slideWidth + gapPercentage)}%)`,
+              }}
+            >
+              {services.map((service, index) => (
+                <div
+                  key={`${service.title}-${index}`}
+                  className="flex-shrink-0"
+                  style={{
+                    width: `${adjustedSlideWidth}%`,
+                    marginRight: index < services.length - 1 ? `${gapPercentage}%` : "0",
+                  }}
+                >
+                  <ServiceCard icon={service.icon} title={service.title} description={service.description} />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* <Link to='/' className='block md:hidden text-center mt-8'>
-            <Button 
-              label="Browse All Services" 
-              variant="outline" 
+        {/* pagination Dots */}
+        <div className="flex justify-center mt-8 space-x-2 flex-wrap">
+          {Array.from({ length: Math.min(maxIndex + 1, 10) }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`h-2 rounded-full transition-all focus:outline-none ${
+                index === currentIndex ? "bg-white w-6" : "bg-white/50 w-2"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
             />
-          </Link> */}
+          ))}
+        </div>
+
       </div>
     </div>
   );

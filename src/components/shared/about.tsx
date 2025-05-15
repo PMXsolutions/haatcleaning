@@ -139,7 +139,7 @@ export const About = () => {
           </div>
           
           <div className="mt-12 text-center">
-            <Link to='/' className='hidden md:flex justify-center'>
+            <Link to='/booking' className='hidden md:flex justify-center'>
               <Button 
                 label="Book Now" 
                 variant="primary" 

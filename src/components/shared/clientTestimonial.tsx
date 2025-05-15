@@ -59,7 +59,7 @@ export const Testimonials: FC<TestimonialsProps> = ({
   ];
 
   return (
-    <div className="bg-muted py-12 px-4">
+    <div className="bg-[#F5F1E6] py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl md:text-4xl lg:text-5xl max-w-3xl mx-auto font-bold text-center text-primary font-heading mb-10">
           {title}

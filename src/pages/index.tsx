@@ -7,8 +7,8 @@ import { CleaningServicesHero } from '@/components/shared/cleaningStat'
 import { Testimonials } from '@/components/shared/clientTestimonial'
 import FAQ from '@/components/shared/faq'
 import { About } from '@/components/shared/about'
-import { Pricing } from '@/components/shared/pricing'
-import ContactUs from '@/components/shared/contact'
+// import { Pricing } from '@/components/shared/pricing'
+// import ContactUs from '@/components/shared/contact'
 
 
 const Home: React.FC = () => {
@@ -42,12 +42,12 @@ const Home: React.FC = () => {
                 />
               </Link>
 
-              <Link to='#services'>
+              <a href='#services'>
                 <Button 
                   label="Check Our Services" 
                   variant="outline" 
                 />
-              </Link>
+              </a>
 
             </div>
           </div>
@@ -68,16 +68,12 @@ const Home: React.FC = () => {
             Residential Cleaning Services
           </h2>
           <p className="mb-4">
-            In a professional context it often happens that private or corporate
-            clients order a publication to be made and presented with the actual
-            content still not being ready.
+            In today’s busy world, maintaining a clean space can be challenging-yet it's essential for comfort and well-being. That’s why we offer reliable, professional cleaning services designed to make life easier for both homeowners and businesses.
           </p>
           <p className="mb-6">
-            On the other hand, we denounce with righteous indignation and dislike
-            men who are so beguiled and demoralized by the charms of pleasure of
-            the moment.
+            We believe in the value of a spotless environment and the peace of mind it brings. Our team is trained, trustworthy, and fully committed to delivering high-quality results, every time. From one-time deep cleans to scheduled maintenance, we’ve got the tools and expertise to handle it all.
           </p>
-          <div className="flex space-x-8 mb-6">
+          {/* <div className="flex space-x-8 mb-6">
             <div>
               <p className="text-xl font-bold">53k</p>
               <p className="text-sm">Layout Done</p>
@@ -90,7 +86,7 @@ const Home: React.FC = () => {
               <p className="text-xl font-bold">150</p>
               <p className="text-sm">Got Awards</p>
             </div>
-          </div>
+          </div> */}
           {/* <Link to='/about'>
             <Button 
               label="Learn More" 
@@ -136,13 +132,13 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      <section id="pricing" className='w-full sm:max-w-[85%] mx-auto'>
+      {/* <section id="pricing" className='w-full sm:max-w-[85%] mx-auto'>
         <Pricing />
-      </section>
+      </section> */}
 
-      <section id="contact" className='w-full mx-auto'>
+      {/* <section id="contact" className='w-full mx-auto'>
         <ContactUs />
-      </section>
+      </section> */}
 
       
     </main>
