@@ -1,4 +1,4 @@
-import { ExtraService, SelectedExtra } from '../../types';
+import { ExtraService, SelectedExtra } from '@/types';
 import { Popover, Transition } from '@headlessui/react' // Using Popover for hover captions
 
 interface ExtraServicesProps {
@@ -38,13 +38,13 @@ const ExtraServiceItem: React.FC<ExtraServiceItemProps> = ({
     <Popover className="relative">
       {({ open }) => (
         <>
-          <Popover.Button as="div"> {/* Use div to prevent button styling */}
+          <Popover.Button as="div">
             <button
               type="button"
               onClick={onToggle}
               className={`
                 p-4 border rounded-lg text-center cursor-pointer transition-colors duration-150 w-full h-full flex flex-col items-center justify-center relative
-                ${isSelected ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-300' : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'}
+                ${isSelected ? 'border-2 border-color bg-primary' : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'}
               `}
             >
               <span className="text-3xl mb-1">{service.icon}</span>
@@ -71,7 +71,7 @@ const ExtraServiceItem: React.FC<ExtraServiceItemProps> = ({
             leaveTo="transform scale-95 opacity-0"
           >
             <Popover.Panel className="absolute z-10 w-48 p-2 mt-1 text-xs text-center text-white bg-gray-700 rounded-md shadow-lg -translate-x-1/2 left-1/2">
-                  {service.description} (${service.price}{service.hasQuantity ? '/item' : ''})
+              {service.description} (${service.price}{service.hasQuantity ? '/item' : ''})
             </Popover.Panel>
           </Transition>
         </>

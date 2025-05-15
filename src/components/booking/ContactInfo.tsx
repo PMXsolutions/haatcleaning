@@ -1,5 +1,5 @@
 import { ChangeEvent } from 'react';
-import { ContactDetails } from '../../types';
+import { ContactDetails } from '@/types';
 
 type ContactInfoErrors = Partial<Record<keyof ContactDetails, string>>;
 
@@ -17,13 +17,13 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({ value, onChange, error
 	};
 
 	// Common input styling
-	const inputClass = "mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm";
+	const inputClass = "mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm";
 	const errorInputClass = "border-red-500 ring-red-500 focus:border-red-500 focus:ring-red-500";
   const errorTextClass = "mt-1 text-xs text-red-600";
 
 	return (
 		<section className="p-4 border border-gray-200 rounded-lg shadow-sm bg-white">
-			<h3 className="text-lg font-semibold mb-4 text-gray-800">Contact Information</h3>
+			<h3 className="text-lg font-semibold mb-4 text-primary">Contact Information</h3>
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
 				<div>
 					<label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
@@ -84,7 +84,7 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({ value, onChange, error
 						Phone Number
 					</label>
 					<input
-						type="tel" // Use tel for better mobile support
+						type="tel"
 						name="phone"
 						id="phone"
 						value={value.phone}

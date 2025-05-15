@@ -35,14 +35,14 @@ const Home: React.FC = () => {
             <p className="text-2xl mb-2 font-bold max-w-xl mx-auto font-text">Expert cleaning services for homes and businesses. Fast, reliable, and tailored to your needs.</p>
             
             <div className='flex justify-center gap-4 mt-4'>
-              <Link to='/'>
+              <Link to='/booking'>
                 <Button 
                   label="Book Now" 
                   variant="primary" 
                 />
               </Link>
 
-              <Link to='/'>
+              <Link to='#services'>
                 <Button 
                   label="Check Our Services" 
                   variant="outline" 

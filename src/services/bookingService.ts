@@ -1,4 +1,4 @@
-import { BookingData, BookingRecord, ExtraService } from '../types';
+import { BookingData, BookingRecord, ExtraService } from '@/types';
 
 // --- MOCK DATA ---
 const mockBookedDays = [
@@ -10,7 +10,6 @@ const mockBookedDays = [
 let mockAdminBookedDays = [...mockBookedDays]; // Admin modifiable list
 
 const mockExistingBookings: BookingRecord[] = [
-    // Add some sample booking records for the admin dashboard
     {
         id: 'bk_123',
         propertyInfo: { bedrooms: 2, bathrooms: 1 },
@@ -22,9 +21,7 @@ const mockExistingBookings: BookingRecord[] = [
         bookingTimestamp: Date.now() - 86400000, // Yesterday
         paymentStatus: 'pending',
     },
-    // Add more mock bookings if needed
 ];
-// --- END MOCK DATA ---
 
 // --- Booking Page Functions ---
 
@@ -33,7 +30,7 @@ export const fetchUnavailableDates = async (): Promise<Date[]> => {
     console.log('API Call (Mock): fetchUnavailableDates');
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 300));
-    // In future, replace this with:
+    // In fture, replace this with:
     // const response = await fetch('/api/booking/unavailable-dates');
     // const data = await response.json();
     // return data.map(dateStr => new Date(dateStr));

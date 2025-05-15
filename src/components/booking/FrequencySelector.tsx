@@ -1,5 +1,4 @@
-import React from 'react';
-import { Frequency } from '../../types';
+import { Frequency } from '@/types';
 
 interface FrequencySelectorProps {
 	value: Frequency;
@@ -23,7 +22,7 @@ export const FrequencySelector: React.FC<FrequencySelectorProps> = ({ value, onC
 
 	const getButtonClass = (optionId: Frequency): string => {
 		const baseClass = "flex-1 text-center px-4 py-3 border rounded-md cursor-pointer transition-all duration-150 ease-in-out focus:outline-none";
-		const selectedClass = "bg-gold text-white shadow-md hover:bg-blue-600";
+		const selectedClass = "bg-gold text-white shadow-md hover:bg-white hover:text-black";
 		const unselectedClass = "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400";
 
 		return `${baseClass} ${value === optionId ? selectedClass : unselectedClass}`;

@@ -3,6 +3,7 @@ import { BookingRecord } from '@/types';
 import { fetchAdminBookings, updatePaymentStatus, updateBlockedDates, freeUpDate, fetchUnavailableDates } from '@/services/bookingService';
 import { BookingList } from '@/components/admin/BookingList';
 import { AdminCalendarControl } from '@/components/admin/AdminCalendar';
+import { Button } from '@/components/shared/button'
 
 export default function AdminDashboard() {
   const [bookings, setBookings] = useState<BookingRecord[]>([]);
@@ -113,13 +114,12 @@ export default function AdminDashboard() {
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Cleaning Service Admin Dashboard</h1>
-        <button 
+        <h1 className="text-4xl md:text-6xl font-bold m-4 font-heading">Admin Dashboard</h1>
+        <Button 
+          label="Refresh Data" 
+          variant="primary" 
           onClick={refreshData}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Refresh Data
-        </button>
+        />
       </div>
       
       {error && (
@@ -130,7 +130,7 @@ export default function AdminDashboard() {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <h2 className="text-xl font-semibold mb-4">Booking Management</h2>
+          {/* <h2 className="text-xl font-semibold mb-4">Booking Management</h2> */}
           <BookingList 
             bookings={bookings} 
             onConfirmPayment={handleConfirmPayment} 

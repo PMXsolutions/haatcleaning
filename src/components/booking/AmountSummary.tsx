@@ -1,6 +1,6 @@
 import React from 'react';
-import { BookingData } from '../../types';
-import { calculateTotal } from '../../services/bookingService';
+import { BookingData } from '@/types';
+import { calculateTotal } from '@/services/bookingService';
 
 interface AmountSummaryProps {
   bookingData: Partial<BookingData>; // Use partial as not all data might be filled yet
@@ -29,7 +29,7 @@ export const AmountSummary: React.FC<AmountSummaryProps> = ({ bookingData }) => 
       <div className="border-t border-gray-200 pt-3 mt-3">
         <p className="flex justify-between items-center text-lg font-semibold">
           <span>Estimated Total:</span>
-          <span className="text-blue-600">{formatCurrency(totalAmount)}</span>
+          <span className="text-gold">{formatCurrency(totalAmount)}</span>
         </p>
       </div>
 

@@ -5,7 +5,7 @@ import {
 } from '@/types';
 import {
   fetchUnavailableDates, submitBooking, getAvailableExtras
-} from '@/services/bookingService'; // mock service
+} from '@/services/bookingService'; 
 
 import { PropertyDetails } from '@/components/booking/PropertyDetails';
 import { FrequencySelector } from '@/components/booking/FrequencySelector';
@@ -16,7 +16,7 @@ import { ContactInfo } from '@/components/booking/ContactInfo';
 import { AddressInfo } from '@/components/booking/AddressInfo';
 
 type BookingFormErrors = Partial<
-    Record<keyof ContactDetails | keyof AddressDetails | 'selectedDate' | 'form', string>
+  Record<keyof ContactDetails | keyof AddressDetails | 'selectedDate' | 'form', string>
 >;
 
 const initialBookingData: BookingData = {
@@ -77,8 +77,10 @@ export const BookingPage: React.FC = () => {
         newErrors.email = 'Please enter a valid email address.';
     }
     if (!data.contactDetails.phone.trim()) {
-        newErrors.phone = 'Phone number is required.';
-    } 
+      newErrors.phone = 'Phone number is required.';
+    } else if (!/^\d{10,15}$/.test(data.contactDetails.phone.replace(/\D/g, ''))) {
+        newErrors.phone = 'Please enter a valid phone number.';
+    }
 
     // Address Info
     if (!data.addressDetails.street.trim()) {
@@ -146,12 +148,11 @@ export const BookingPage: React.FC = () => {
       if (Object.keys(validationErrors).length > 0) {
         setErrors(validationErrors);
         setSubmitMessage('Please fix the errors above.');
+        // setIsSubmitting(false)
         return; // Stop submission
       }
   
     try {
-      // Normally you would validate input here...
-  
       const result = await submitBooking(bookingData);
   
       if (result.success) {
@@ -179,8 +180,6 @@ export const BookingPage: React.FC = () => {
     }
   };
   
-
-
   // const handleProceedToPayment = async () => {
   //   setSubmitMessage('');
   //   setErrors({}); 
@@ -218,12 +217,12 @@ export const BookingPage: React.FC = () => {
   // };
 
   return (
-    <div className="container mx-auto p-4 md:p-8 max-w-6xl">
-      <h1 className="text-3xl font-bold text-center mb-8">Book Your Appointment</h1>
+    <div className="container mx-auto p-4 md:p-8">
+      <h1 className="text-4xl md:text-6xl text-primary font-heading font-bold text-center mb-8">Book Your Appointment</h1>
 
       {/* Display General/Form Errors */}
       {errors.form && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <div className="bg-red-100 border font-text border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
           <strong className="font-bold">Error: </strong>
           <span className="block sm:inline">{errors.form}</span>
         </div>
@@ -231,7 +230,7 @@ export const BookingPage: React.FC = () => {
 
       <div className="md:grid md:grid-cols-3 md:gap-8">
         {/* Booking Form */}
-        <div className="md:col-span-2 space-y-8 mb-8 md:mb-0">
+        <div className="md:col-span-2 space-y-8 mb-8 md:mb-0 font-text text-primary">
           <PropertyDetails value={bookingData.propertyInfo} onChange={handlePropertyChange} />
           <FrequencySelector value={bookingData.frequency} onChange={handleFrequencyChange} />
 
@@ -281,10 +280,11 @@ export const BookingPage: React.FC = () => {
           <button
             type="button"
             onClick={handleProceedToPayment}
-            disabled={isSubmitting || isLoadingDates}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoadingDates}
+            // disabled={isSubmitting || isLoadingDates}
+            className="w-full bg-gold text-white cursor-pointer font-bold py-3 px-6 rounded-lg transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? 'Submitting...' : 'Proceed to Payment'}
+            {isSubmitting ? 'Submit Again' : 'Proceed to Payment'}
           </button>
         </div>
 

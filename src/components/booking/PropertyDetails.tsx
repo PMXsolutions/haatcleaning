@@ -19,8 +19,8 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({ value, onChang
   };
 
   // Common button styling
-  const buttonClass = "px-3 py-1 border border-gray-300 bg-gray-100 hover:bg-gray-200 transition-colors rounded disabled:opacity-50 disabled:cursor-not-allowed";
-  const valueClass = "px-4 font-semibold text-lg";
+  const buttonClass = "px-3 py-1 border bg-gold hover:bg-white hover:border-color cursor-pointer transition-colors rounded disabled:opacity-50 disabled:cursor-not-allowed";
+  const valueClass = "px-4 font-semibold text-md";
 
   return (
     <section className="p-4 border border-gray-200 rounded-lg shadow-sm bg-white">

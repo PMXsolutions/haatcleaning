@@ -16,7 +16,7 @@ export const BookingList: React.FC<BookingListProps> = ({ bookings, onConfirmPay
   };
 
   if (bookings.length === 0) {
-    return <p className="text-gray-500">No bookings found.</p>;
+    return <p className="text-primary">No bookings found.</p>;
   }
 
   // Helper function to format date
@@ -64,7 +64,7 @@ export const BookingList: React.FC<BookingListProps> = ({ bookings, onConfirmPay
                   <div className="flex space-x-2">
                     <button
                       onClick={() => toggleDetails(booking.id)}
-                      className="text-blue-600 hover:text-blue-800"
+                      className="text-gold"
                     >
                       {expandedBooking === booking.id ? 'Hide Details' : 'View Details'}
                     </button>
