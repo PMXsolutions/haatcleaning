@@ -23,7 +23,8 @@ html {
     /* --primary: hsl(35 85% 55%); */
     --primary: #8A7C3D;
     --primary-foreground: hsl(0 0% 100%);
-    --secondary: hsl(210 40% 96.1%);
+    /* --secondary: hsl(210 40% 96.1%); */
+    --secondary: #F5F1E6;
     --secondary-foreground: hsl(222.2 47.4% 11.2%);
     --muted: hsl(210 40% 94%);
     --muted-foreground: hsl(215 20% 50%);
@@ -56,6 +57,9 @@ html {
   }
   .bg-muted {
     background-color: var(--muted);
+  }
+  .bg-secondary {
+    background-color: var(--secondary);
   }
 
   /* Text Colors */

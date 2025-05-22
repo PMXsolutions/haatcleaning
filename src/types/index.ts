@@ -6,6 +6,10 @@ export interface PropertyInfo {
   bathrooms: number;
 }
 
+// Service type options
+export type ServiceType = "residential" | "commercial" | "airbnb"
+
+
 // Frequency Options
 export type Frequency = 'one-time' | 'weekly' | 'bi-weekly' | 'monthly';
 
@@ -41,12 +45,14 @@ export interface SelectedExtra {
 
 // Combined Booking Data
 export interface BookingData {
+  serviceType: ServiceType
   propertyInfo: PropertyInfo;
   frequency: Frequency;
   selectedDate: Date | undefined;
   selectedExtras: SelectedExtra[];
   contactDetails: ContactDetails;
   addressDetails: AddressDetails;
+  specialInstructions: string;
 }
 
 // Complete Booking Record (with ID, timestamp, etc.)

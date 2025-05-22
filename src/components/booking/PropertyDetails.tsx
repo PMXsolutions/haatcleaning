@@ -9,17 +9,17 @@ interface PropertyDetailsProps {
 export const PropertyDetails: React.FC<PropertyDetailsProps> = ({ value, onChange }) => {
 
   const handleBedroomsChange = (increment: number) => {
-    const newValue = Math.max(1, value.bedrooms + increment); // Ensure at least 1 bedroom
+    const newValue = Math.max(0, value.bedrooms + increment); 
     onChange({ ...value, bedrooms: newValue });
   };
 
   const handleBathroomsChange = (increment: number) => {
-    const newValue = Math.max(1, value.bathrooms + increment); // Ensure at least 1 bathroom
+    const newValue = Math.max(0, value.bathrooms + increment); 
     onChange({ ...value, bathrooms: newValue });
   };
 
   // Common button styling
-  const buttonClass = "px-3 py-1 border bg-gold hover:bg-white hover:border-color cursor-pointer transition-colors rounded disabled:opacity-50 disabled:cursor-not-allowed";
+  const buttonClass = "px-3 py-1 border bg-gold text-white hover:text-gold hover:bg-white hover:border-color cursor-pointer transition-colors rounded disabled:opacity-50 disabled:cursor-not-allowed";
   const valueClass = "px-4 font-semibold text-md";
 
   return (
@@ -33,7 +33,7 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({ value, onChang
             <button
               type="button"
               onClick={() => handleBedroomsChange(-1)}
-              disabled={value.bedrooms <= 1}
+              disabled={value.bedrooms <= 0}
               className={`${buttonClass} rounded-l`}
               aria-label="Decrease bedrooms"
             >
@@ -58,7 +58,7 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({ value, onChang
             <button
               type="button"
               onClick={() => handleBathroomsChange(-1)}
-              disabled={value.bathrooms <= 1}
+              disabled={value.bathrooms <= 0}
               className={`${buttonClass} rounded-l`}
               aria-label="Decrease bathrooms"
             >

@@ -5,32 +5,6 @@ import { Button } from '@/components/shared/button'
 // import { FaSprayCanSparkles, FaUsers, FaFaceSmile } from "react-icons/fa6";
 
 export const CleaningServicesHero = () => {
-  // const [isVisible, setIsVisible] = useState(false);
-
-  // useEffect(() => {
-  //   setIsVisible(true);
-  // }, []);
-
-  // const stats = [
-  //   {
-  //     icon: <FaSprayCanSparkles className="w-8 h-8 md:w-14 md:h-14 text-gold" />,
-  //     value: '12,540+',
-  //     label: 'Jobs done',
-  //     animationDuration: 2.5,
-  //   },
-  //   {
-  //     icon: <FaUsers className="w-8 h-8 md:w-14 md:h-14 text-gold" />,
-  //     value: '100+',
-  //     label: 'Team members',
-  //     animationDuration: 2.0,
-  //   },
-  //   {
-  //     icon: <FaFaceSmile className="w-8 h-8 md:w-14 md:h-14 text-gold" />,
-  //     value: '3,780+',
-  //     label: 'Happy clients',
-  //     animationDuration: 2.2,
-  //   }
-  // ];
 
   return (
     <div className="w-full py-18">

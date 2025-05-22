@@ -8,6 +8,9 @@ import Login from './pages/Login';
 import SignUp from './pages/signUp';
 import AdminDashboard from './pages/AdminDashboard';
 import ContactUsPage from './pages/contactUs'
+import { ResidentialServicePage } from './pages/services/residential';
+import { AirBnBServicePage } from './pages/services/airbnb';
+import { CommercialServicePage } from './pages/services/commercial';
 // import About from './pages/about'
 
 function App() {
@@ -24,6 +27,10 @@ function App() {
             <Route path="/contactUs" element={<ContactUsPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signUp" element={<SignUp />} />
+            <Route path="/services/residential" element={<ResidentialServicePage />} />
+            <Route path="/services/commercial" element={<CommercialServicePage />} />
+            <Route path="/services/airbnb" element={<AirBnBServicePage />} />
+          
           </Routes>
         </main>
         <Footer />

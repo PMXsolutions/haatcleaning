@@ -2,7 +2,7 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { DayPicker } from "react-day-picker"
-import "react-day-picker/dist/style.css"
+import "react-day-picker/style.css"
 import type { BookingRecord } from "@/types"
 // import type { DayProps } from "react-day-picker"
 
@@ -126,6 +126,7 @@ export const AdminCalendarControl: React.FC<AdminCalendarControlProps> = ({
     <div className="bg-white p-4 rounded-lg shadow">
       <div className="mb-4">
         <DayPicker
+          // navLayout="around"
           mode="single"
           selected={selectedDate}
           onSelect={setSelectedDate}
@@ -136,16 +137,18 @@ export const AdminCalendarControl: React.FC<AdminCalendarControlProps> = ({
           }}
           modifiersStyles={{
             unavailable: {
-              backgroundColor: " hsl(35 85% 55%)",
+              backgroundColor: "#8A7C3D",
               color: "#fff",
               textDecoration: "line-through",
             },
             hasBookings: {
               fontWeight: "bold",
-              border: "2px solid hsl(35 85% 55%)",
+              border: "2px solid ",              backgroundColor: "#8A7C3D",
+              color: "#fff",
             },
             selected: {
-              borderColor: "hsl(35 85% 55%)",
+              // backgroundColor: "#8A7C3D",
+              color: "#fff",
             },
           }}
           showOutsideDays
@@ -158,26 +161,27 @@ export const AdminCalendarControl: React.FC<AdminCalendarControlProps> = ({
           //   },
           // }}
           classNames={{
-            chevron: "fill-amber-500",
-            selected: "text-gold font-bold",
-            root: 'w-full',
-            months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
-            month: 'space-y-4',
-            caption: 'flex justify-center pt-1 relative items-center',
-            caption_label: 'text-sm font-medium text-gray-700',
-            nav: 'flex items-center',
-            nav_button: 'h-6 w-6 bg-white absolute hover:bg-gray-50 rounded-md flex items-center justify-center',
-            nav_button_previous: 'left-1',
-            nav_button_next: 'right-1',
-            table: 'w-full border-collapse space-y-1',
-            head_row: 'flex',
-            head_cell: 'text-gray-500 rounded-md w-8 h-8 font-normal text-[0.8rem]',
-            row: 'flex w-full mt-1',
-            cell: 'text-gray-600 rounded-md w-8 h-8 flex items-center justify-center text-sm p-0 relative',
-            day: 'w-8 h-8 rounded-md hover:bg-gray-100 transition-colors',
-            day_selected: '!bg-blue-500 !text-white',
-            day_today: 'bg-blue-100 text-blue-700',
-            day_disabled: 'text-gray-400 line-through',
+            chevron: "fill-[#8A7C3D]",
+            selected: "text-[#8A7C3D] font-bold",
+            today: "text-[#8A7C3D] font-bold border-2 border-[#8A7C3D]",
+            // root: 'w-full',
+            // months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
+            // month: 'space-y-4',
+            // caption: 'flex justify-center pt-1 relative items-center',
+            // caption_label: 'text-sm font-medium text-gray-700',
+            // nav: 'flex items-center',
+            // nav_button: 'h-6 w-6 bg-white absolute hover:bg-gray-50 rounded-md flex items-center justify-center',
+            // nav_button_previous: 'left-1',
+            // nav_button_next: 'right-1',
+            // table: 'w-full border-collapse space-y-1',
+            // head_row: 'flex',
+            head_cell: 'text-[#8A7C3D] rounded-md w-8 h-8 font-normal text-[0.8rem]',
+            // row: 'flex w-full mt-1',
+            // cell: 'text-gray-600 rounded-md w-8 h-8 flex items-center justify-center text-sm p-0 relative',
+            // day: 'w-8 h-8 rounded-md hover:bg-gray-100 transition-colors',
+            day_selected: '!bg-[#8A7C3D] !text-white',
+            day_today: 'bg-[#8A7C3D] text-[#8A7C3D]',
+            // day_disabled: 'text-gray-400 line-through',
             day_outside: 'text-gray-400 opacity-50',
             day_range_middle: 'aria-selected:bg-gray-100 aria-selected:text-gray-700',
           }}

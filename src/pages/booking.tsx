@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback} from 'react';
 import {
   BookingData, PropertyInfo, Frequency, SelectedExtra,
-  ContactDetails, AddressDetails, ExtraService
+  ContactDetails, AddressDetails, ExtraService, ServiceType,
 } from '@/types';
 import {
   fetchUnavailableDates, submitBooking, getAvailableExtras
 } from '@/services/bookingService'; 
+// import axiosInstance from "@/lib/axios"
 
+import { ServiceTypeSelector } from "@/components/booking/ServiceType"
 import { PropertyDetails } from '@/components/booking/PropertyDetails';
 import { FrequencySelector } from '@/components/booking/FrequencySelector';
 import { CalendarPicker } from '@/components/booking/CalendarPicker';
@@ -14,18 +16,21 @@ import { ExtraServices } from '@/components/booking/ExtraServices';
 import { AmountSummary } from '@/components/booking/AmountSummary';
 import { ContactInfo } from '@/components/booking/ContactInfo';
 import { AddressInfo } from '@/components/booking/AddressInfo';
+import { SpecialInstructions } from "@/components/booking/SpecialInstructions"
 
 type BookingFormErrors = Partial<
   Record<keyof ContactDetails | keyof AddressDetails | 'selectedDate' | 'form', string>
 >;
 
 const initialBookingData: BookingData = {
+  serviceType: "residential",
   propertyInfo: { bedrooms: 1, bathrooms: 1 },
   frequency: 'one-time',
   selectedDate: undefined,
   selectedExtras: [],
   contactDetails: { firstName: '', lastName: '', email: '', phone: '' },
   addressDetails: { street: '', city: '', zipCode: '' },
+  specialInstructions: "",
 };
 
 export const BookingPage: React.FC = () => {
@@ -98,6 +103,10 @@ export const BookingPage: React.FC = () => {
 
   // --- Update Handlers ---
   // Use useCallback to prevent unnecessary re-renders of child components if needed
+  const handleServiceTypeChange = useCallback((serviceType: ServiceType) => {
+    setBookingData((prev) => ({ ...prev, serviceType }))
+  }, [])
+
   const handlePropertyChange = useCallback((propertyInfo: PropertyInfo) => {
     setBookingData(prev => ({ ...prev, propertyInfo }));
   }, []);
@@ -139,6 +148,10 @@ export const BookingPage: React.FC = () => {
     }));
   }, []);
 
+  const handleSpecialInstructionsChange = useCallback((specialInstructions: string) => {
+    setBookingData((prev) => ({ ...prev, specialInstructions }))
+  }, [])
+
   const handleProceedToPayment = async () => {
     setIsSubmitting(true);
     setSubmitMessage('');
@@ -179,42 +192,7 @@ export const BookingPage: React.FC = () => {
       setIsSubmitting(false);
     }
   };
-  
-  // const handleProceedToPayment = async () => {
-  //   setSubmitMessage('');
-  //   setErrors({}); 
 
-  //   const validationErrors = validateForm(bookingData);
-  //   if (Object.keys(validationErrors).length > 0) {
-  //     setErrors(validationErrors);
-  //     setSubmitMessage('Please fix the errors above.');
-  //     return; // Stop submission
-  //   }
-
-  //   setIsSubmitting(true);
-  //   // setSubmitMessage('');
-  //   try {
-  //     // ** API Integration Point **
-  //     const result = await submitBooking(bookingData);
-  //     if (result.success) {
-  //       setSubmitMessage(`Booking successful! ID: ${result.bookingId}. Proceeding to payment...`);
-  //       // TODO: Redirect to payment page (or show payment modal)
-  //       // For now, just log and maybe reset the form
-  //       console.log('Booking submitted:', bookingData);
-  //       console.log('Would navigate to payment page now.');
-  //         // Optionally reset form: setBookingData(initialBookingData);
-  //     } else {
-  //       setSubmitMessage(result.message || 'Booking failed. Please try again.');
-  //       setErrors({ form: result.message || 'Submission failed.' });
-  //     }
-  //   } catch (error) {
-  //     console.error("Booking submission error:", error);
-  //     setSubmitMessage('An error occurred during submission.');
-  //     setErrors({ form: 'An error occurred during submission.' });
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
 
   return (
     <div className="container mx-auto p-4 md:p-8">
@@ -231,6 +209,8 @@ export const BookingPage: React.FC = () => {
       <div className="md:grid md:grid-cols-3 md:gap-8">
         {/* Booking Form */}
         <div className="md:col-span-2 space-y-8 mb-8 md:mb-0 font-text text-primary">
+          {/* Service Type Selector */}
+          <ServiceTypeSelector value={bookingData.serviceType} onChange={handleServiceTypeChange} />
           <PropertyDetails value={bookingData.propertyInfo} onChange={handlePropertyChange} />
           <FrequencySelector value={bookingData.frequency} onChange={handleFrequencyChange} />
 
@@ -253,6 +233,11 @@ export const BookingPage: React.FC = () => {
             availableExtras={availableExtras}
             selectedExtras={bookingData.selectedExtras}
             onChange={handleExtrasChange}
+          />
+
+          <SpecialInstructions
+            value={bookingData.specialInstructions || ""}
+            onChange={handleSpecialInstructionsChange}
           />
 
           <ContactInfo
