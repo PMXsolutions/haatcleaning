@@ -17,7 +17,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="bg-primary max-w-screen-xl mx-auto">
+      <div className="bg-primary w-full 2xl:max-w-[1240px] mx-auto">
         <Navbar />
         <main className="">
           <Routes>
