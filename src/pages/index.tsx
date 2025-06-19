@@ -1,9 +1,8 @@
-import React from 'react';
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/shared/button'
 import { ImageGallery } from '@/components/shared/ImageGallery'
 import { ServicesSection } from '@/components/shared/servicesSection'
-import { CleaningServicesHero } from '@/components/shared/cleaningStat'
+// import { CleaningServicesHero } from '@/components/shared/cleaningStat'
 import { Testimonials } from '@/components/shared/clientTestimonial'
 import FAQ from '@/components/shared/faq'
 import { About } from '@/components/shared/about'
@@ -16,100 +15,109 @@ const Home: React.FC = () => {
     <main className="w-full overflow-hidden" id="home">
 
       {/* hero content */}
-      <section className='relative w-full h-[80vh] overflow-hidden rounded-3xl mt-6'>
+      <section className='relative w-full max-h-[700px] overflow-hidden mt-6 mx-auto'>
         <div className="absolute inset-0">
           <img 
-            src="/images/hero-bg.jpg" 
+            src="/images/hero-bg.png" 
             alt="Cleaning Service" 
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black opacity-50"></div>
+          <div className="absolute inset-0 bg-white/5"></div>
         </div>
         
         {/* Content Container */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
-          <div className="max-w-4xl">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 font-heading">
-              Quality cleaning, tailored to your needs.
-            </h1>
-            <p className="text-2xl mb-2 font-bold max-w-xl mx-auto font-text">Expert cleaning services for homes and businesses. Fast, reliable, and tailored to your needs.</p>
+        <div className="relative h-full grid lg:grid-cols-2 text-black px-6 gap-6 max-w-7xl mx-auto">
+          {/* Left Container */}
+          <div className="flex flex-col justify-center z-10 py-6 lg:py-0">
+            <div className="max-w-xl">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 font-heading leading-tight">
+                Quality cleaning, tailored to your needs.
+              </h1>
+              <p className="text-lg md:text-xl mb-8 text-gray-700 leading-relaxed font-text">
+                Expert cleaning services for homes and businesses. Fast, reliable, and tailored to your needs.
+              </p>
             
-            <div className='flex justify-center gap-4 mt-4'>
-              <Link to='/booking'>
-                <Button 
-                  label="Book Now" 
-                  variant="primary" 
-                />
-              </Link>
+              <div className='flex flex-col sm:flex-row gap-4'>
+                <Link to='/booking'>
+                  <Button 
+                    label="Book Now" 
+                    variant="primary" 
+                  />
+                </Link>
 
-              <a href='#services'>
-                <Button 
-                  label="Check Our Services" 
-                  variant="outline" 
-                />
-              </a>
+                <Link to='/login'>
+                  <Button 
+                    label="Login" 
+                    variant="outline" 
+                  />
+                </Link>
+              </div>
+            </div>
+          </div>
 
+          {/* Right Image  */}
+          <div className="items-center justify-center z-10 hidden lg:flex">
+            <img
+              src="/images/hero-team-image.png"
+              alt="Professional cleaning team in green uniforms"
+              className="object-cover"
+            />
+          </div>
+        </div>
+      </section>
+
+       {/* services */}
+      <section id="services" className='w-full mx-auto'>
+        <ServicesSection />
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="py-4 lg:py-16">
+        <div className='max-w-7xl mx-auto px-4 sm:px-6'>
+          <div className='grid lg:grid-cols-2 gap-4 items-center md:w-[70%] lg:w-full text-center lg:text-left mx-auto  mb-10 lg:mb-0'>
+            {/* left content */}
+            <div className='space-y-6 text-primary'>
+              <div className=" w-[70%] md:w-full mx-auto">
+                <p className="md:text-[14px] lg:text-sm uppercase text-gold font-body">
+                  Affordable cleaning solutions
+                </p>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-6 font-heading">
+                  High-Quality and Friendly Services at Fair Prices
+                </h2>
+                <p className="mb-4 text-gray-600 font-body">
+                  We provide comprehensive cleaning services tailored to your needs. From residential cleaning services.
+                </p>
+                {/* <p className="mb-4 text-gray-600 font-body">
+                  We believe in the value of a spotless environment and the peace of mind it brings. Our team is trained, trustworthy, and fully committed to delivering high-quality results, every time. From one-time deep cleans to scheduled maintenance, we’ve got the tools and expertise to handle it all.
+                </p> */}
+              </div>
+
+              <div className='pt-4 '>
+                <Link to='/booking'>
+                  <Button 
+                    label="Book Now" 
+                    variant="primary" 
+                    className='mx-auto'
+                  />
+                </Link>
+              </div>
+            </div>
+
+            <div className='flex-1 flex justify-center mx-auto lg:justify-end w-[80%] md:w-full pt-6 lg:pt-0'>
+              <ImageGallery images={["/images/Cleaning-2.png", "/images/Cleaning-1.png"]} />
             </div>
           </div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="flex flex-col md:flex-row justify-center gap-10 py-12 space-y-8 md:space-y-0 md:space-x-12 max-w-[80%] my-4 mx-auto">
-        <div className='flex-1 flex justify-center md:my-auto lg:my-0'>
-          <ImageGallery images={["/images/cleaning1.jpg", "/images/cleaning2.jpg"]} />
-        </div>
-
-        <div className="flex flex-1 flex-col justify-center py-4 text-primary">
-          <p className="md:text-[14px] lg:text-sm uppercase text-gold font-text pt-2">
-            About HAAT Cleaning Services
-          </p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-4 font-heading">
-            Residential Cleaning Services
-          </h2>
-          <p className="mb-4">
-            In today’s busy world, maintaining a clean space can be challenging-yet it's essential for comfort and well-being. That’s why we offer reliable, professional cleaning services designed to make life easier for both homeowners and businesses.
-          </p>
-          <p className="mb-6">
-            We believe in the value of a spotless environment and the peace of mind it brings. Our team is trained, trustworthy, and fully committed to delivering high-quality results, every time. From one-time deep cleans to scheduled maintenance, we’ve got the tools and expertise to handle it all.
-          </p>
-          {/* <div className="flex space-x-8 mb-6">
-            <div>
-              <p className="text-xl font-bold">53k</p>
-              <p className="text-sm">Layout Done</p>
-            </div>
-            <div>
-              <p className="text-xl font-bold">10k</p>
-              <p className="text-sm">Projects Done</p>
-            </div>
-            <div>
-              <p className="text-xl font-bold">150</p>
-              <p className="text-sm">Got Awards</p>
-            </div>
-          </div> */}
-          {/* <Link to='/about'>
-            <Button 
-              label="Learn More" 
-              variant="primary" 
-            />
-          </Link> */}
-        </div>
-
-      </section>
-
       {/* about */}
-      <section className='w-full sm:max-w-[85%] mx-auto'>
+      <section className='w-full mx-auto'>
         <About />
       </section>
 
-      {/* services */}
-      <section id="services" className='w-full mx-auto'>
-        <ServicesSection />
-      </section>
-
-      <section className='w-full sm:max-w-[85%] mx-auto p-4 sm:p-0'>
+      {/* <section className='w-full sm:max-w-[85%] mx-auto p-4 sm:p-0'>
         <CleaningServicesHero />
-      </section>
+      </section> */}
 
       <section className='w-full sm:max-w-[85%] mx-auto'>
         <Testimonials />

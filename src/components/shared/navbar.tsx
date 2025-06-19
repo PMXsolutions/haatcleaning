@@ -13,10 +13,10 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
   { name: 'Home', path: '/', sectionId: 'home' }, // Using path for page navigation and sectionId for scrolling
-  { name: 'About', path: '/#about', sectionId: 'about' },
+  { name: 'About Us', path: '/#about', sectionId: 'about' },
   { name: 'Services', path: '/#services', sectionId: 'services' },
   // { name: 'Pricing', path: '/#pricing', sectionId: 'pricing' },
-  { name: 'Contact Us', path: '/contactUs' },
+  { name: 'Contact', path: '/contactUs' },
   // { name: 'Admin', path: '/admin' },
 ];
 
@@ -156,8 +156,8 @@ export const Navbar = () => {
   }, []);
 
   return (
-    <header className="bg-primary w-full sticky top-0 z-40 border-b border-color">
-      <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 font-text">
+    <header className="bg-primary w-full sticky top-0 z-40">
+      <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 font-text py-2">
         <div className="flex h-16 items-center justify-between">
           <div className="md:flex md:items-center md:gap-12">
             <a 
@@ -172,7 +172,7 @@ export const Navbar = () => {
               <img 
                 src="/images/logo.png" 
                 alt="Cleaning Service" 
-                className="w-22 h-10"
+                className="w-20 h-8 lg:w-32 lg:h-12"
               />
             </a>
           </div>
@@ -201,6 +201,13 @@ export const Navbar = () => {
           {/* Desktop Buttons */}
           <div className="flex items-center gap-4">
             <div className="sm:flex sm:gap-4">
+              <Link to="/login" className="hidden md:flex">
+                <Button 
+                  label="Login" 
+                  variant="outline" 
+                />
+              </Link>
+
               <Link to="/booking" className="hidden md:flex">
                 <Button 
                   label="Book Now" 
@@ -208,12 +215,6 @@ export const Navbar = () => {
                 />
               </Link>
 
-              <Link to="/login" className="hidden md:flex">
-                <Button 
-                  label="Login" 
-                  variant="outline" 
-                />
-              </Link>
             </div>
 
             <div className="block md:hidden">

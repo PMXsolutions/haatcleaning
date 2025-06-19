@@ -8,7 +8,7 @@ const FeatureItem: React.FC<FeatureItemProps> = ({ text })  => {
   return (
     <div className="flex items-center gap-2 text-gold font-medium font-text text-primary">
       <ImCheckboxChecked className="text-gold text-xl" />
-      <span>{text}</span>
+      <span className="">{text}</span>
     </div>
   );
 };

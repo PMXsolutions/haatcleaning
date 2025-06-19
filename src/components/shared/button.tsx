@@ -5,6 +5,8 @@ interface ButtonProps {
   disabled?: boolean;
   variant?: 'primary' | 'outline';
   className?: string;
+  icon?: React.ReactNode
+  iconPosition?: "left" | "right"
 }
 
 export const Button: React.FC<ButtonProps> = ({ 
@@ -12,9 +14,11 @@ export const Button: React.FC<ButtonProps> = ({
   onClick, 
   disabled,
   variant = 'primary',
-  className = ''
+  className = '',
+  icon,
+  iconPosition = "right",
 }) => {
-  const baseClasses = 'px-6 py-2 rounded-full font-medium transition-all duration-300 border border-color cursor-pointer';
+  const baseClasses = 'px-6 py-2 font-medium transition-all duration-300 border border-color cursor-pointer rounded-lg flex items-center justify-center gap-2';
   
   const variantClasses = {
     primary: 'bg-gold hover:bg-white text-white hover:text-gold',
@@ -28,7 +32,9 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       className={`${baseClasses} ${variantClasses[variant]} ${className}`}
     >
+      {icon && iconPosition === "left" && icon}
       {label}
+      {icon && iconPosition === "right" && icon}
     </button>
   );
 };
