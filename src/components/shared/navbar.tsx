@@ -16,7 +16,7 @@ const navLinks: NavLink[] = [
   { name: 'About Us', path: '/#about', sectionId: 'about' },
   { name: 'Services', path: '/#services', sectionId: 'services' },
   // { name: 'Pricing', path: '/#pricing', sectionId: 'pricing' },
-  { name: 'Contact', path: '/contactUs' },
+  { name: 'Contact', path: '/#contact', sectionId: 'contact' },
   // { name: 'Admin', path: '/admin' },
 ];
 

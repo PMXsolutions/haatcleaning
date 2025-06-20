@@ -45,7 +45,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images,  smallImageP
         <img
           src={images[0] || "/placeholder.svg?height=240&width=200"}
           alt="Cleaning in action"
-          className="object-cover rounded-2xl shadow-xl border-4 border-white"
+          className="object-cover rounded-2xl shadow-xl"
         />
         {/* <div className="relative w-full h-full">
         </div> */}

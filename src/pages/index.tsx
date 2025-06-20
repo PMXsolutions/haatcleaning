@@ -2,12 +2,13 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/shared/button'
 import { ImageGallery } from '@/components/shared/ImageGallery'
 import { ServicesSection } from '@/components/shared/servicesSection'
+import { MdArrowOutward } from "react-icons/md";
 // import { CleaningServicesHero } from '@/components/shared/cleaningStat'
-import { Testimonials } from '@/components/shared/clientTestimonial'
+import { TestimonialCarousel } from '@/components/shared/clientTestimonial'
 import FAQ from '@/components/shared/faq'
 import { About } from '@/components/shared/about'
 // import { Pricing } from '@/components/shared/pricing'
-// import ContactUs from '@/components/shared/contact'
+import ContactUs from '@/components/shared/contact'
 
 
 const Home: React.FC = () => {
@@ -72,12 +73,12 @@ const Home: React.FC = () => {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-4 lg:py-16">
+      <section id="about" className="py-6 md:py-12 lg:py-16">
         <div className='max-w-7xl mx-auto px-4 sm:px-6'>
           <div className='grid lg:grid-cols-2 gap-4 items-center md:w-[70%] lg:w-full text-center lg:text-left mx-auto  mb-10 lg:mb-0'>
             {/* left content */}
             <div className='space-y-6 text-primary'>
-              <div className=" w-[70%] md:w-full mx-auto">
+              <div className="w-[70%] md:w-full mx-auto">
                 <p className="md:text-[14px] lg:text-sm uppercase text-gold font-body">
                   Affordable cleaning solutions
                 </p>
@@ -97,7 +98,8 @@ const Home: React.FC = () => {
                   <Button 
                     label="Book Now" 
                     variant="primary" 
-                    className='mx-auto'
+                    className='mx-auto lg:mx-0'
+                    icon={<MdArrowOutward className="text-lg" />}
                   />
                 </Link>
               </div>
@@ -119,24 +121,32 @@ const Home: React.FC = () => {
         <CleaningServicesHero />
       </section> */}
 
-      <section className='w-full sm:max-w-[85%] mx-auto'>
-        <Testimonials />
+      <section className='w-full mx-auto'>
+        <TestimonialCarousel />
       </section>
 
       {/* faq section */}
-      <section className="flex flex-col md:flex-row justify-center gap-10 py-12 space-y-8 md:space-y-0 md:space-x-12 max-w-[80%] my-4 mx-auto">
-        <div className='flex-1 flex justify-center md:my-auto lg:my-0'>
-          <ImageGallery images={["/images/cleaning1.jpg", "/images/cleaning2.jpg"]} />
-        </div>
+      <section className="py-6 md:py-12 lg:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid lg:grid-cols-2 gap-4 items-center md:w-[70%] lg:w-full text-center lg:text-left mx-auto  mb-10 lg:mb-0">
+            <div className='flex-1 flex justify-center mx-auto lg:justify-start w-[80%] md:w-full pt-6 lg:pt-0 order-1 lg:order-0 mr-auto lg:mr-6'>
+              <ImageGallery 
+                images={["/images/Cleaning-4.png", "/images/Cleaning-3.png"]}
+                smallImagePosition="right"
+                largeImagePosition="left"
+              />
+            </div>
 
-        <div className="flex flex-1 flex-col justify-center py-4 text-primary">
-          <p className="md:text-[14px] lg:text-sm uppercase text-gold font-text pt-2">
-            FAQ
-          </p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-4 font-heading">
-            Get answers to common questions about us.
-          </h2>
-          <FAQ />
+            <div className="flex flex-1 flex-col justify-center py-4 text-primary">
+              <p className="md:text-[14px] lg:text-sm uppercase text-gold font-text pt-2">
+                FAQ
+              </p>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-4 font-heading">
+                Get answers to common questions about us.
+              </h2>
+              <FAQ />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -144,9 +154,9 @@ const Home: React.FC = () => {
         <Pricing />
       </section> */}
 
-      {/* <section id="contact" className='w-full mx-auto'>
+      <section id="contact" className='w-full mx-auto'>
         <ContactUs />
-      </section> */}
+      </section>
 
       
     </main>

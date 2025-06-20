@@ -15,7 +15,7 @@ const FAQItem: FC<FAQItemProps> = ({ question, answer, isOpen, toggleOpen }) => 
         className="flex justify-between items-center w-full text-left"
         onClick={toggleOpen}
       >
-        <h3 className="font-bold">{question}</h3>
+        <h4 className="font-bold">{question}</h4>
         <div className="text-gold">
           {isOpen ? <FiChevronsDown size={20} /> : <FiChevronsRight size={20} />}
         </div>

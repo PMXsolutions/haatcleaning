@@ -4,8 +4,7 @@ import { ValueCard } from '@/components/shared/valueCard';
 import FeatureItem from '@/components/shared/featureItem';
 import { Button } from '@/components/shared/button';
 import { ImageGallery } from '@/components/shared/ImageGallery';
-// import { RiHeartsFill, RiUserFill, RiCalendar2Fill } from "react-icons/ri";
-// import { ImCheckboxChecked } from "react-icons/im";
+import { MdArrowOutward } from "react-icons/md";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { FaHandHoldingHeart, FaShieldAlt, FaAward } from "react-icons/fa";
 import { IoTime } from "react-icons/io5";
@@ -97,7 +96,7 @@ export const About = () => {
         </div> */}
       </div>
 
-      <section id="about" className="py-4 lg:py-16">
+      <section id="about" className="py-6 md:py-12 lg:py-16">
         <div className='max-w-7xl mx-auto px-4 sm:px-6'>
           <div className='grid lg:grid-cols-2 gap-4 items-center md:w-[70%] lg:w-full text-center lg:text-left mx-auto  mb-10 lg:mb-0'>
             <div className='flex-1 flex justify-center mx-auto lg:justify-start w-[80%] md:w-full pt-6 lg:pt-0 order-1 lg:order-0 mr-auto lg:mr-6'>
@@ -121,6 +120,16 @@ export const About = () => {
                     <FeatureItem key={item} text={item} />
                   ))}
                 </div>
+                <div className='pt-8'>
+                  <Link to='/booking'>
+                    <Button 
+                      label="Book Now" 
+                      variant="primary" 
+                      className='mx-auto lg:mx-0'
+                      icon={<MdArrowOutward className="text-lg" />}
+                    />
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -129,14 +138,14 @@ export const About = () => {
       </section>
 
       {/* Values */}
-      <section className="py-4 lg:py-16 px-4">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-6 md:py-12 lg:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-0">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary font-heading text-center mb-4">Our Values</h2>
-          <p className="text-center text-primary font-text mb-12 max-w-2xl mx-auto">
+          <p className="text-center text-primary font-text mb-12 w-[70%] lg:w-full mx-auto">
             We're guided by a core set of principles that define who we are and how we work with our clients and partners.
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
             {values.map((value, index) => (
               <ValueCard
                 key={index}

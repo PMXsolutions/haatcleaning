@@ -1,12 +1,13 @@
 
 interface ButtonProps {
-  label: string;
+  label?: string;
   onClick?: () => void;
   disabled?: boolean;
-  variant?: 'primary' | 'outline';
+  variant?: 'primary' | 'outline' | 'icon';
   className?: string;
   icon?: React.ReactNode
   iconPosition?: "left" | "right"
+  // size?: "sm" | "md" | "lg"
 }
 
 export const Button: React.FC<ButtonProps> = ({ 
@@ -17,13 +18,14 @@ export const Button: React.FC<ButtonProps> = ({
   className = '',
   icon,
   iconPosition = "right",
+  // size = "md",
 }) => {
   const baseClasses = 'px-6 py-2 font-medium transition-all duration-300 border border-color cursor-pointer rounded-lg flex items-center justify-center gap-2';
   
   const variantClasses = {
     primary: 'bg-gold hover:bg-white text-white hover:text-gold',
-    
-    outline: 'bg-white hover:bg-gold text-gold hover:text-white'
+    outline: 'bg-white hover:bg-gold text-gold hover:text-white',
+    icon: "bg-white hover:bg-gold text-gold hover:text-white",
   };
   
   return (

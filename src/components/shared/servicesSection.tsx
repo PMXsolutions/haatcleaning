@@ -1,4 +1,5 @@
-import { FaHome, FaBuilding, FaKey, FaArrowRight } from "react-icons/fa";
+import { FaHome, FaBuilding, FaKey } from "react-icons/fa";
+import { MdArrowOutward } from "react-icons/md";
 import { Button } from '@/components/shared/button'
 import { useNavigate } from "react-router-dom";
 // import { on } from "events";
@@ -53,9 +54,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ title, description, features,
         <div className="mt-auto">
           <Button 
             label="Learn More" 
-            variant="primary" 
+            variant="outline" 
             onClick={onLearnMore}
-            icon={<FaArrowRight className="text-sm" />}
+            icon={<MdArrowOutward className="text-lg" />}
           />
         </div>
       </div>
@@ -117,7 +118,7 @@ export const ServicesSection: React.FC = () => {
   };
 
   return (
-    <div className="py-16">
+    <div className="py-6 md:py-12">
       <div className="max-w-7xl mx-auto px-4 lg:px-6">
         <div className="">
           {/* Text Content */}
