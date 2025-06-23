@@ -161,6 +161,7 @@ export const About = () => {
               <Button 
                 label="Book Now" 
                 variant="primary" 
+                icon={<MdArrowOutward className="text-lg" />}
               />
             </Link>
           </div>

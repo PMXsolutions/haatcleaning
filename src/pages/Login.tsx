@@ -1,89 +1,106 @@
-import { Button } from '@/components/shared/button';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import FormLayout from "@/components/shared/form-layout"
+import GoogleSignInButton from "@/components/shared/google-button"
+import FormInput from "@/components/shared/form-input"
 
-const Login = () => {
+const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setErrors(null);
+    setErrors({});
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const newErrors: { [key: string]: string } = {}
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      setErrors('Please enter a valid email.');
-      return;
+      newErrors.email = "Please enter a valid email address"
     }
 
     if (password.length < 6) {
-      setErrors('Password must be at least 6 characters.');
-      return;
+      newErrors.password = "Password must be at least 6 characters"
     }
 
-    // Handle login logic here
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return
+    }
+
+    // Handle login logic
     // console.log('Logging in with:', { email, password });
+
   };
+  
+  const handleGoogleSignIn = () => {
+    // Handle Google sign-in logic
+    console.log("Google sign-in clicked")
+  }
 
   return (
-    <div className="h-[80vh] flex items-center justify-center bg-gold px-4">
-      <div className="w-[430px] bg-white rounded-2xl shadow-lg pt-8 px-6 pb-6">
-        <h2 className="text-gold text-3xl font-semibold text-center font-heading mb-6">Login</h2>
+    <FormLayout>
+      <div className="bg-white rounded-xl p-8 w-full font-body">
+        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-8">Login</h2>
 
-        {errors && (
-          <p className="text-red-600 text-sm text-center mb-4">{errors}</p>
-        )}
+        <div className="space-y-6">
+          <GoogleSignInButton onClick={handleGoogleSignIn} />
 
-        <form onSubmit={handleSubmit} className="space-y-4 font-text">
-          <input
-            type="email"
-            placeholder="Your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full p-3 border-b-2 border-gray-300 outline-none focus:border-[#8A7C3D] placeholder-gray-400"
-          />
-          <input
-            type="password"
-            placeholder="Your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full p-3 border-b-2 border-gray-300 outline-none focus:border-[#8A7C3D] placeholder-gray-400"
-          />
-
-          {/* <div className="text-right">
-            <a href="#" className="text-yellow-600 hover:underline text-sm">
-              Forgot Password?
-            </a>
-          </div> */}
-
-          <Button
-            label="Login"
-            variant="primary"
-            className="w-full p-3 mt-4 bg-gold text-white rounded-full text-lg font-medium hover:opacity-90 transition"
-          />
-
-          {/* sign up link */}
-          <div className="text-center mt-4">
-            <p className="text-primary text-sm font-text">
-              Don't have an account?{" "}
-              <Link to="/signUp" className="text-gold hover:underline font-medium">
-                Sign up
-              </Link>
-            </p>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">OR</span>
+            </div>
           </div>
 
-          {/* <button
-            type="submit"
-            className="w-full p-3 bg-gold text-white rounded-full text-lg font-medium hover:opacity-90 transition"
-          >
-            Login
-          </button> */}
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <FormInput
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={errors.email}
+              label="Email Address"
+              required
+            />
+
+            <FormInput
+              type="password"
+              placeholder="Enter Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              error={errors.password}
+              label="Password"
+              required
+            />
+
+            <div className="pt-2">
+              <button
+                type="submit"
+                className="w-full px-6 py-2 font-medium transition-all duration-300 border border-color cursor-pointer rounded-lg flex items-center justify-center gap-2 bg-gold hover:bg-white text-white hover:text-gold"
+              >
+                Sign in
+              </button>
+            </div>
+          </form>
+        </div>
+
       </div>
-    </div>
+
+      <div className="mt-6 text-center">
+        <div className="bg-white rounded-full px-8 py-3 w-fit mx-auto">
+          <span className="text-gray-600 text-sm">
+            {"Don't have an account? "}
+            <Link to="/signup" className="text-gold hover:underline font-medium">
+              Sign up
+            </Link>
+          </span>
+        </div>
+      </div>
+    </FormLayout>
   );
 };
 

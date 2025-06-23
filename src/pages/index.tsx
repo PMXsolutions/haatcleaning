@@ -126,7 +126,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* faq section */}
-      <section className="py-6 md:py-12 lg:py-16">
+      <section className="py-6 md:py-12 lg:py-16" id="faq">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-4 items-center md:w-[70%] lg:w-full text-center lg:text-left mx-auto  mb-10 lg:mb-0">
             <div className='flex-1 flex justify-center mx-auto lg:justify-start w-[80%] md:w-full pt-6 lg:pt-0 order-1 lg:order-0 mr-auto lg:mr-6'>

@@ -1,9 +1,11 @@
-import { Button } from "@/components/shared/button"
-import type React from "react"
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import FormLayout from "../components/shared/form-layout"
+import GoogleSignInButton from "../components/shared/google-button"
+import FormInput from "../components/shared/form-input"
 
-const SignUp = () => {
+
+const SignUp: React.FC = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -25,28 +27,23 @@ const SignUp = () => {
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {}
 
-    // Validate first name
     if (!formData.firstName.trim()) {
       newErrors.firstName = "First name is required"
     }
 
-    // Validate last name
     if (!formData.lastName.trim()) {
       newErrors.lastName = "Last name is required"
     }
 
-    // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(formData.email)) {
       newErrors.email = "Please enter a valid email address"
     }
 
-    // Validate password
     if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters"
     }
 
-    // Validate password confirmation
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match"
     }
@@ -73,106 +70,111 @@ const SignUp = () => {
     //   setIsSubmitting(false)
     //   // Redirect or show success message
     // }, 1500)
+
+  }
+
+  const handleGoogleSignIn = () => {
+    // Handle Google sign-in logic here
+    console.log("Google sign-in clicked")
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-gold px-4 py-10">
-      <div className="w-full max-w-[500px] bg-white rounded-2xl shadow-lg pt-8 px-6 pb-6">
-        <h2 className="font-heading text-gold text-3xl font-semibold text-center mb-6">Create Account</h2>
+    <FormLayout>
+      <div className="bg-white rounded-xl p-8 w-full font-body">
+        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-8">Sign up</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4 font-text">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <input
-                type="text"
-                name="firstName"
-                placeholder="First Name"
-                value={formData.firstName}
-                onChange={handleChange}
-                className={`w-full p-3 border-b-2 ${
-                  errors.firstName ? "border-red-500" : "border-gray-300"
-                } outline-none focus:border-[#8A7C3D] placeholder-gray-400`}
-              />
-              {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+        <div className="space-y-6">
+          <GoogleSignInButton onClick={handleGoogleSignIn} />
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
             </div>
-
-            <div className="flex-1">
-              <input
-                type="text"
-                name="lastName"
-                placeholder="Last Name"
-                value={formData.lastName}
-                onChange={handleChange}
-                className={`w-full p-3 border-b-2 ${
-                  errors.lastName ? "border-red-500" : "border-gray-300"
-                } outline-none focus:border-[#8A7C3D] placeholder-gray-400`}
-              />
-              {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">OR</span>
             </div>
           </div>
 
-          <div>
-            <input
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <FormInput
+              type="text"
+              name="firstName"
+              placeholder="First Name"
+              value={formData.firstName}
+              onChange={handleChange}
+              error={errors.firstName}
+              label="First Name"
+              required
+            />
+
+            <FormInput
+              type="text"
+              name="lastName"
+              placeholder="Last Name"
+              value={formData.lastName}
+              onChange={handleChange}
+              error={errors.lastName}
+              label="Last Name"
+              required
+            />
+
+            <FormInput
               type="email"
               name="email"
-              placeholder="Your Email"
+              placeholder="Email Address"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full p-3 border-b-2 ${
-                errors.email ? "border-red-500" : "border-gray-300"
-              } outline-none focus:border-[#8A7C3D] placeholder-gray-400`}
+              error={errors.email}
+              label="Email Address"
+              required
             />
-            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-          </div>
 
-          <div>
-            <input
+            <FormInput
               type="password"
               name="password"
-              placeholder="Create Password"
+              placeholder="Enter Password"
               value={formData.password}
               onChange={handleChange}
-              className={`w-full p-3 border-b-2 ${
-                errors.password ? "border-red-500" : "border-gray-300"
-              } outline-none focus:border-[#8A7C3D] placeholder-gray-400`}
+              error={errors.password}
+              label="Password"
+              required
             />
-            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
-          </div>
 
-          <div>
-            <input
+            <FormInput
               type="password"
               name="confirmPassword"
-              placeholder="Confirm Password"
+              placeholder="Enter Password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className={`w-full p-3 border-b-2 ${
-                errors.confirmPassword ? "border-red-500" : "border-gray-300"
-              } outline-none focus:border-[#8A7C3D] placeholder-gray-400`}
+              error={errors.confirmPassword}
+              label="Confirm Password"
+              required
             />
-            {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
-          </div>
 
-          <div className="pt-2">
-            <Button
-              label={isSubmitting ? "Creating Account..." : "Sign Up"}
-              variant="primary"
-              disabled={isSubmitting}
-              className="w-full p-3 bg-gold text-white rounded-full text-lg font-medium hover:opacity-90 transition disabled:opacity-70"
-            />
-          </div>
-
-          <div className="text-center mt-4 font-text">
-            <p className="text-primary text-sm">
-              Already have an account?{" "}
-              <Link to="/login" className="text-gold hover:underline font-medium">
-                Log in
-              </Link>
-            </p>
-          </div>
-        </form>
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full px-6 py-2 font-medium transition-all duration-300 border border-color cursor-pointer rounded-lg flex items-center justify-center gap-2 bg-gold hover:bg-white text-white hover:text-gold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? "Creating Account..." : "Submit"}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+
+      <div className="my-6 text-center">
+        <div className="bg-white rounded-full px-8 py-3 w-fit mx-auto">
+          <span className="text-gray-600 text-sm">
+            Already have an account?{" "}
+            <Link to="/login" className="text-gold hover:underline font-medium">
+              Login
+            </Link>
+          </span>
+        </div>
+      </div>
+    </FormLayout>
   )
 }
 
