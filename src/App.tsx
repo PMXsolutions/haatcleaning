@@ -8,7 +8,7 @@ import Login from './pages/Login';
 import SignUp from './pages/signUp';
 import ForgotPassword from './pages/forgot-password';
 import CreateNewPassword from './pages/create-password';
-import AdminDashboard from './pages/AdminDashboard';
+// import AdminDashboard from './pages/AdminDashboard';
 import ContactUsPage from './pages/contactUs'
 import { ResidentialServicePage } from './pages/services/residential';
 import { AirBnBServicePage } from './pages/services/airbnb';
@@ -31,7 +31,7 @@ function AppContent() {
       <main className="">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          {/* <Route path="/admin" element={<AdminDashboard />} /> */}
           <Route path="/booking" element={<BookingPage />} />
           <Route path="/contactUs" element={<ContactUsPage />} />
           <Route path="/login" element={<Login />} />

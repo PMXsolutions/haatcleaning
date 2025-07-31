@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useCallback } from "react"
 import type { BookingData, ContactDetails, AddressDetails } from "@/types"
-import { fetchUnavailableDates } from "@/services/bookingService"
 import { StepIndicator } from "@/components/booking/step-indicator"
 import { Step1ServiceSelection } from "@/components/booking/step1-service-selection"
 import { Step2AddOns } from "@/components/booking/step2-add-ons"
@@ -36,16 +35,16 @@ export const BookingPage = () => {
   const { serviceFrequencies } = useServiceFrequencies()
   const { serviceOptions } = useServiceOptions()
 
-  useEffect(() => {
-    const loadInitialData = async () => {
-      try {
-        await fetchUnavailableDates()
-      } catch (error) {
-        console.error("Failed to load unavailable dates:", error)
-      }
-    }
-    loadInitialData()
-  }, [])
+  // useEffect(() => {
+  //   const loadInitialData = async () => {
+  //     try {
+  //       await fetchUnavailableDates()
+  //     } catch (error) {
+  //       console.error("Failed to load unavailable dates:", error)
+  //     }
+  //   }
+  //   loadInitialData()
+  // }, [])
 
   const validateAndProceedStep1 = async (): Promise<boolean> => {
     if (!postalCode.trim()) {
