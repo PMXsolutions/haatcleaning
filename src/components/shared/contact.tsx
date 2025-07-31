@@ -125,7 +125,7 @@ export default function ContactUs() {
                 </div>
                 <div className="text-left">
                   <h3 className="font-semibold text-gray-900 text-xl font-body">Call Us</h3>
-                  <p className="text-gray-500">(908) 236 201 888</p>
+                  <p className="text-gray-500">+234 703 708 1231</p>
                 </div>
               </div>
 
@@ -147,7 +147,7 @@ export default function ContactUs() {
                 </div>
                 <div className="text-left">
                   <h3 className="font-semibold text-gray-900 text-xl font-body">Address</h3>
-                  <p className="text-gray-500">7616 Brand Tower, New York, USA</p>
+                  <p className="text-gray-500">Level 2, 11-17 Swanson Court, Belconnen ACT 2617. Australia</p>
                 </div>
               </div>
             </div>
