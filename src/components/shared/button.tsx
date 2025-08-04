@@ -3,7 +3,7 @@ interface ButtonProps {
   label?: string;
   onClick?: () => void;
   disabled?: boolean;
-  variant?: 'primary' | 'outline' | 'icon';
+  variant?: 'primary' | 'outline' | 'icon' | 'danger';
   className?: string;
   icon?: React.ReactNode
   iconPosition?: "left" | "right"
@@ -26,6 +26,7 @@ export const Button: React.FC<ButtonProps> = ({
     primary: 'bg-gold hover:bg-white text-white hover:text-gold',
     outline: 'bg-white hover:bg-gold text-gold hover:text-white',
     icon: "bg-white hover:bg-gold text-gold hover:text-white",
+    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
   };
   
   return (

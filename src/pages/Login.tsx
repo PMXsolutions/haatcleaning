@@ -1,43 +1,57 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import FormLayout from "@/components/shared/form-layout"
-import GoogleSignInButton from "@/components/shared/google-button"
-import FormInput from "@/components/shared/form-input"
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import FormLayout from "@/components/shared/form-layout";
+// import GoogleSignInButton from "@/components/shared/google-button"
+import FormInput from "@/components/shared/form-input";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{ [key: string]: string }>({})
+  const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
+    setIsLoading(true);
 
-    const newErrors: { [key: string]: string } = {}
+    const newErrors: { [key: string]: string } = {};
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      newErrors.email = "Please enter a valid email address"
+      newErrors.email = "Please enter a valid email address";
     }
 
     if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters"
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors)
-      return
+      setErrors(newErrors);
+      setIsLoading(false);
+      return;
     }
 
-    // Handle login logic
-    // console.log('Logging in with:', { email, password });
-
+    try {
+      await login(email, password, rememberMe);
+      navigate('/dashboard');
+    } catch (err) {
+      setErrors({ general: 'Invalid email or password. Please try again.' });
+      console.error('Login error:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
-  
-  const handleGoogleSignIn = () => {
-    // Handle Google sign-in logic
-    console.log("Google sign-in clicked")
-  }
+
+  // const handleGoogleSignIn = () => {
+  //   // Handle Google sign-in logic
+  //   console.log("Google sign-in clicked")
+  // }
 
   return (
     <FormLayout>
@@ -45,18 +59,24 @@ const Login: React.FC = () => {
         <h2 className="text-2xl font-semibold text-center text-gray-800 mb-8">Login</h2>
 
         <div className="space-y-6">
-          <GoogleSignInButton onClick={handleGoogleSignIn} />
+          {/* <GoogleSignInButton onClick={handleGoogleSignIn} /> */}
 
-          <div className="relative">
+          {/* <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-white text-gray-500">OR</span>
             </div>
-          </div>
+          </div> */}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {errors.general && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                {errors.general}
+              </div>
+            )}
+
             <FormInput
               type="email"
               placeholder="Email Address"
@@ -77,17 +97,43 @@ const Login: React.FC = () => {
               required
             />
 
+            {/* Remember Me Checkbox */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 text-gold focus:ring-gold border-gray-300 rounded"
+                />
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                  Remember me
+                </label>
+              </div>
+
+              <div className="text-sm">
+                <Link
+                  to="/forgot-password"
+                  className="font-medium text-gold hover:text-gold/80 transition-colors"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+            </div>
+
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full px-6 py-2 font-medium transition-all duration-300 border border-color cursor-pointer rounded-lg flex items-center justify-center gap-2 bg-gold hover:bg-white text-white hover:text-gold"
+                disabled={isLoading}
+                className="w-full px-6 py-2 font-medium transition-all duration-300 border border-color cursor-pointer rounded-lg flex items-center justify-center gap-2 bg-gold hover:bg-white text-white hover:text-gold disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Sign in
+                {isLoading ? "Signing in..." : "Sign in"}
               </button>
             </div>
           </form>
         </div>
-
       </div>
 
       <div className="mt-6 text-center">

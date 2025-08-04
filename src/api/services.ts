@@ -1,5 +1,5 @@
 import axiosInstance from './axiosConfig'
-import type { ServiceArea, ServiceType, ServiceFrequency, ServiceOption } from './types'
+import type { ServiceArea, ServiceType, ServiceFrequency, ServiceOption, CreateServiceAreaRequest, ServiceAreaApiResponse } from '@/api/types'
 
 class ApiService {
   // Service Areas API
@@ -9,6 +9,36 @@ class ApiService {
       return response.data
     } catch (error) {
       console.error('Error fetching service areas:', error)
+      throw error
+    }
+  }
+
+  async addServiceArea(data: CreateServiceAreaRequest): Promise<ServiceAreaApiResponse> {
+    try {
+      const response = await axiosInstance.post<ServiceAreaApiResponse>('/ServiceAreas/add', data)
+      return response.data
+    } catch (error) {
+      console.error('Error adding service area:', error)
+      throw error
+    }
+  }
+
+  async updateServiceArea(data: ServiceArea): Promise<ServiceAreaApiResponse> {
+    try {
+      const response = await axiosInstance.post<ServiceAreaApiResponse>(`/ServiceAreas/edit/${data.serviceAreaId}`, data)
+      return response.data
+    } catch (error) {
+      console.error('Error updating service area:', error)
+      throw error
+    }
+  }
+
+  async deleteServiceArea(id: string): Promise<ServiceAreaApiResponse> {
+    try {
+      const response = await axiosInstance.post<ServiceAreaApiResponse>(`/ServiceAreas/delete/${id}`)
+      return response.data
+    } catch (error) {
+      console.error('Error deleting service area:', error)
       throw error
     }
   }
@@ -44,6 +74,41 @@ class ApiService {
     }
   }
 
+  async addServiceType(data: Omit<ServiceType, 'serviceTypeId'>): Promise<ServiceAreaApiResponse> {
+    try {
+      const response = await axiosInstance.post<ServiceAreaApiResponse>(
+        '/ServiceTypes/add', 
+        data
+      )
+      return response.data
+    } catch (error) {
+      console.error('Error adding service type:', error)
+      throw error
+    }
+  }
+
+  async updateServiceType(data: ServiceType): Promise<ServiceAreaApiResponse> {
+    try {
+      const response = await axiosInstance.post<ServiceAreaApiResponse>(`/ServiceTypes/edit/${data.serviceTypeId}`, data)
+      return response.data
+    } catch (error) {
+      console.error('Error updating service type:', error)
+      throw error
+    }
+  }
+
+  async deleteServiceType(serviceTypeId: string): Promise<ServiceAreaApiResponse> {
+    try {
+      const response = await axiosInstance.post<ServiceAreaApiResponse>(
+        `/ServiceTypes/delete/${serviceTypeId}`
+      )
+      return response.data
+    } catch (error) {
+      console.error('Error deleting service type:', error)
+      throw error
+    }
+  }
+
   async getServiceTypeById(id: string): Promise<ServiceType | null> {
     try {
       const serviceTypes = await this.getAllServiceTypes()
@@ -54,6 +119,7 @@ class ApiService {
     }
   }
 
+  // Service Frequencies API
   async getAllServiceFrequencies(): Promise<ServiceFrequency[]> {
     try {
       const response = await axiosInstance.get<ServiceFrequency[]>('/ServiceFrequencies/get_all')
@@ -75,27 +141,6 @@ class ApiService {
     }
   }
 
-  // Add more endpoints as needed
-  // async createBooking(bookingData: any): Promise<any> {
-  //   try {
-  //     const response = await axiosInstance.post('/bookings', bookingData)
-  //     return response.data
-  //   } catch (error) {
-  //     console.error('Error creating booking:', error)
-  //     throw error
-  //   }
-  // }
-
-  // Extra services endpoint (if exists)
-  // async getExtraServices(): Promise<any[]> {
-  //   try {
-  //     const response = await axiosInstance.get('/ExtraServices/get_all')
-  //     return response.data
-  //   } catch (error) {
-  //     console.error('Error fetching extra services:', error)
-  //     throw error
-  //   }
-  // }
 }
 
 // Export singleton instance

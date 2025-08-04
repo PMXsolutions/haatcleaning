@@ -4,6 +4,22 @@ export interface ServiceArea {
   areaName: string
 }
 
+export interface CreateServiceAreaRequest {
+  areaName: string;
+  postalCode: string;
+}
+
+// export interface UpdateServiceAreaRequest {
+//   serviceAreaId: string;
+//   areaName: string;
+//   postalCode: string;
+// }
+
+export interface ServiceAreaApiResponse {
+  status: string;
+  message: string;
+}
+
 export interface ServiceType {
   serviceTypeId: string
   name: string

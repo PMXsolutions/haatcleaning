@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Keep this import as it's in your original code
+import { Link, useNavigate } from 'react-router-dom';
 import { RxActivityLog, RxCross1 } from "react-icons/rx";
+import { FiUser, FiLogOut, FiBell, FiChevronDown } from "react-icons/fi";
+import { useAuth } from '@/hooks/useAuth';
 
 import { Button } from '@/components/shared/button';
 
@@ -12,17 +14,18 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-  { name: 'Home', path: '/', sectionId: 'home' }, // Using path for page navigation and sectionId for scrolling
+  { name: 'Home', path: '/', sectionId: 'home' },
   { name: 'About Us', path: '/#about', sectionId: 'about' },
   { name: 'Services', path: '/#services', sectionId: 'services' },
-  // { name: 'Pricing', path: '/#pricing', sectionId: 'pricing' },
   { name: 'Contact', path: '/#contact', sectionId: 'contact' },
-  // { name: 'Admin', path: '/admin' },
 ];
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const toggleMenu = (): void => {
     setIsMenuOpen(!isMenuOpen);
@@ -33,7 +36,6 @@ export const Navbar = () => {
     const { path, sectionId } = link;
     const isCurrentPage = window.location.pathname === '/' || window.location.pathname === '';
     
-    // Close menu if open
     if (isMenuOpen) setIsMenuOpen(false);
     
     // Case 1: We're on the home page and need to scroll to a section
@@ -41,13 +43,10 @@ export const Navbar = () => {
       const element = document.getElementById(sectionId);
       
       if (element) {
-        // Scroll smoothly to the element
         element.scrollIntoView({ behavior: 'smooth' });
         
-        // Update URL with hash without causing a page jump
         window.history.pushState({}, '', path);
         
-        // Set active section based on path
         setActiveSection(path);
       }
       return;
@@ -55,12 +54,10 @@ export const Navbar = () => {
     
     // Case 2: We need to navigate to the home page and then scroll to a section
     if (!isCurrentPage && path.includes('#')) {
-      // Store the target section in sessionStorage to retrieve after page navigation
       if (sectionId) {
         sessionStorage.setItem('scrollToSection', sectionId);
       }
       
-      // Navigate to the home page
       window.location.href = path;
       return;
     }
@@ -78,18 +75,27 @@ export const Navbar = () => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setIsProfileDropdownOpen(false);
+  };
+
+  const handleDashboard = () => {
+    navigate('/dashboard');
+    setIsProfileDropdownOpen(false);
+  };
+
   // Function to check which section is currently in view and handle initial section scrolling
   useEffect(() => {
     const handleScroll = (): void => {
-      const scrollPosition = window.scrollY + 100; // Offset for navbar height
+      const scrollPosition = window.scrollY + 100;
       
-      // Check if we're at the top for home section
       if (scrollPosition < 200) {
         setActiveSection('/');
         return;
       }
       
-      // Check each section to see if it's in view
       navLinks.forEach(({ path, sectionId }) => {
         if (sectionId) {
           const element = document.getElementById(sectionId);
@@ -154,11 +160,13 @@ export const Navbar = () => {
     // Clean up
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+  
 
   return (
     <header className="bg-primary w-full sticky top-0 z-40">
       <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 font-text py-2">
         <div className="flex h-16 items-center justify-between">
+          {/* Logo */}
           <div className="md:flex md:items-center md:gap-12">
             <a 
               className="block text-gold" 
@@ -200,22 +208,70 @@ export const Navbar = () => {
 
           {/* Desktop Buttons */}
           <div className="flex items-center gap-4">
-            <div className="sm:flex sm:gap-4">
-              <Link to="/login" className="hidden md:flex">
-                <Button 
-                  label="Login" 
-                  variant="outline" 
-                />
-              </Link>
+            {isAuthenticated ? (
+              <div className="hidden md:flex items-center gap-4">
+                <Link to="/booking">
+                  <Button 
+                    label="Book Now" 
+                    variant="primary" 
+                  />
+                </Link>
 
-              <Link to="/booking" className="hidden md:flex">
-                <Button 
-                  label="Book Now" 
-                  variant="primary" 
-                />
-              </Link>
+                {/* Notification Icon */}
+                <button className="relative p-1 text-gray-600 hover:text-gray-800 transition-colors">
+                  <FiBell className="w-5 h-5" />
+                  {/* <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span> */}
+                </button>
+                
+                {/* Profile Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                    className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="w-8 h-8 bg-gold rounded-full flex items-center justify-center">
+                      <FiUser className="text-white text-sm" />
+                    </div>
+                    <span className="text-primary font-medium">{user?.firstName}</span>
+                    <FiChevronDown className="w-4 h-4 text-gray-500" />
+                  </button>
+                  
+                  {isProfileDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                      <button
+                        onClick={handleDashboard}
+                        className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        Dashboard
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-2"
+                      >
+                        <FiLogOut className="text-sm" />
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="sm:flex sm:gap-4">
+                <Link to="/login" className="hidden md:flex">
+                  <Button 
+                    label="Login" 
+                    variant="outline" 
+                  />
+                </Link>
 
-            </div>
+                <Link to="/booking" className="hidden md:flex">
+                  <Button 
+                    label="Book Now" 
+                    variant="primary" 
+                  />
+                </Link>
+              </div>
+            )}
 
             <div className="block md:hidden">
               <button
@@ -231,7 +287,7 @@ export const Navbar = () => {
         </div>
       </div>
   
-        {/* Mobile Menu */}
+      {/* Mobile Menu */}
       <div 
         className={`fixed top-0 right-0 h-full w-[70%] bg-primary z-50 shadow-lg transform transition-transform duration-300 ease-in-out ${
           isMenuOpen ? 'translate-x-0' : 'translate-x-full'
@@ -262,28 +318,61 @@ export const Navbar = () => {
                 </a>
               </li>
             ))}
-            <li className="flex flex-col gap-3 pt-6">
-              <Link 
-                to="/login" 
-                className="w-full"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Button 
-                  label="Login" 
-                  variant="outline"
-                />
-              </Link>
-              <Link 
-                to="/booking" 
-                className="w-full"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Button 
-                  label="Book Now" 
-                  variant="primary"
-                />
-              </Link>
-            </li>
+            {isAuthenticated ? (
+              <li className="flex flex-col gap-3 pt-6">
+                <Link 
+                  to="/booking" 
+                  className="w-full"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Button 
+                    label="Book Now" 
+                    variant="primary"
+                  />
+                </Link>
+                <button
+                  onClick={handleDashboard}
+                  className="w-full"
+                >
+                  <Button 
+                    label="Dashboard" 
+                    variant="outline"
+                  />
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="w-full"
+                >
+                  <Button 
+                    label="Logout" 
+                    variant="outline"
+                  />
+                </button>
+              </li>
+            ) : (
+              <li className="flex flex-col gap-3 pt-6">
+                <Link 
+                  to="/login" 
+                  className="w-full"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Button 
+                    label="Login" 
+                    variant="outline"
+                  />
+                </Link>
+                <Link 
+                  to="/booking" 
+                  className="w-full"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Button 
+                    label="Book Now" 
+                    variant="primary"
+                  />
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
       </div>
@@ -293,6 +382,14 @@ export const Navbar = () => {
         <div 
           className="fixed inset-0 bg-black opacity-50 z-40"
           onClick={toggleMenu}
+        ></div>
+      )}
+      
+      {/* Profile Dropdown Overlay */}
+      {isProfileDropdownOpen && (
+        <div 
+          className="fixed inset-0 z-30"
+          onClick={() => setIsProfileDropdownOpen(false)}
         ></div>
       )}
     </header>
