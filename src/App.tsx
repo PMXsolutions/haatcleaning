@@ -11,7 +11,9 @@ import CreateNewPassword from '@/pages/create-password';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import DashboardHome from '@/components/dashboard/DashboardHome';
 import ServiceAreas from '@/components/dashboard/ServiceAreas';
+import ServiceFrequencies from '@/components/dashboard/ServiceFrequencies';
 import ServiceTypes from '@/components/dashboard/ServiceTypes';
+import ServiceOptions from '@/components/dashboard/ServiceOptions';
 import ContactUsPage from '@/pages/contactUs';
 import { ResidentialServicePage } from '@/pages/services/residential';
 import { AirBnBServicePage } from '@/pages/services/airbnb';
@@ -37,6 +39,8 @@ function AppContent() {
             <Route index element={<DashboardHome />} />
             <Route path="service-areas" element={<ServiceAreas />} />
             <Route path="service-types" element={<ServiceTypes />} />
+            <Route path="service-options" element={<ServiceOptions />} />
+            <Route path="service-frequency" element={<ServiceFrequencies />} />
           </Route>
           <Route path="/booking" element={<BookingPage />} />
           <Route path="/contactUs" element={<ContactUsPage />} />
