@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { apiService } from '@/api/services'
 import type { ServiceArea, ServiceType, ServiceFrequency, ServiceOption } from '@/api/types'
+import { fallbackServiceTypes, fallbackServiceFrequencies, fallbackServiceOptions } from '@/lib/fallbackData'
 
 // Hook for postal code validation
 export const usePostalCodeValidation = () => {
@@ -44,18 +45,23 @@ export const usePostalCodeValidation = () => {
 
 // Hook for service types
 export const useServiceTypes = () => {
-  const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([])
+  const [serviceTypes, setServiceTypes] = useState<ServiceType[]>(fallbackServiceTypes)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [usingFallback, setUsingFallback] = useState(true)
 
   const fetchServiceTypes = useCallback(async () => {
     try {
       setLoading(true)
       const types = await apiService.getAllServiceTypes()
       setServiceTypes(types)
+      setUsingFallback(false)
+      setError(null)
     } catch (err) {
-      setError('Failed to fetch service types')
-      console.error(err)
+      console.error('Failed to fetch service types, using fallback data:', err)
+      setServiceTypes(fallbackServiceTypes)
+      setUsingFallback(true)
+      setError('Using offline data - some features may be limited')
     } finally {
       setLoading(false)
     }
@@ -65,23 +71,28 @@ export const useServiceTypes = () => {
     fetchServiceTypes()
   }, [fetchServiceTypes])
 
-  return { serviceTypes, loading, error, refetch: fetchServiceTypes }
+  return { serviceTypes, loading, error, usingFallback, refetch: fetchServiceTypes }
 }
 
 // Hook for service frequencies
 export const useServiceFrequencies = () => {
-  const [serviceFrequencies, setServiceFrequencies] = useState<ServiceFrequency[]>([])
+  const [serviceFrequencies, setServiceFrequencies] = useState<ServiceFrequency[]>(fallbackServiceFrequencies)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [usingFallback, setUsingFallback] = useState(true)
 
   const fetchServiceFrequencies = useCallback(async () => {
     try {
       setLoading(true)
       const frequencies = await apiService.getAllServiceFrequencies()
       setServiceFrequencies(frequencies)
+      setUsingFallback(false)
+      setError(null)
     } catch (err) {
-      setError('Failed to fetch service frequencies')
-      console.error(err)
+      console.error('Failed to fetch service frequencies, using fallback data:', err)
+      setServiceFrequencies(fallbackServiceFrequencies)
+      setUsingFallback(true)
+      setError('Using offline data - some features may be limited')
     } finally {
       setLoading(false)
     }
@@ -91,7 +102,7 @@ export const useServiceFrequencies = () => {
     fetchServiceFrequencies()
   }, [fetchServiceFrequencies])
 
-  return { serviceFrequencies, loading, error, refetch: fetchServiceFrequencies }
+  return { serviceFrequencies, loading, error, usingFallback, refetch: fetchServiceFrequencies }
 }
 
 // Hook for service areas
@@ -120,20 +131,25 @@ export const useServiceAreas = () => {
   return { serviceAreas, loading, error }
 }
 
-// Service options hook
-export const useServiceOptions = () => {
-  const [serviceOptions, setServiceOptions] = useState<ServiceOption[]>([])
+// Service options hook with service type filtering
+export const useServiceOptions = (serviceTypeId?: string) => {
+  const [serviceOptions, setServiceOptions] = useState<ServiceOption[]>(fallbackServiceOptions)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [usingFallback, setUsingFallback] = useState(true)
 
   const fetchServiceOptions = useCallback(async () => {
     try {
       setLoading(true)
       const options = await apiService.getAllServiceOptions()
       setServiceOptions(options)
+      setUsingFallback(false)
+      setError(null)
     } catch (err) {
-      console.error('Failed to fetch service options:', err)
-      setError('Failed to fetch service options')
+      console.error('Failed to fetch service options, using fallback data:', err)
+      setServiceOptions(fallbackServiceOptions)
+      setUsingFallback(true)
+      setError('Using offline data - some features may be limited')
     } finally {
       setLoading(false)
     }
@@ -143,5 +159,17 @@ export const useServiceOptions = () => {
     fetchServiceOptions()
   }, [fetchServiceOptions])
 
-  return { serviceOptions, loading, error, refetch: fetchServiceOptions }
+  // Filter service options by service type if provided
+  const filteredServiceOptions = serviceTypeId 
+    ? serviceOptions.filter(option => option.serviceTypeId === serviceTypeId)
+    : serviceOptions
+
+  return { 
+    serviceOptions: filteredServiceOptions, 
+    allServiceOptions: serviceOptions,
+    loading, 
+    error, 
+    usingFallback,
+    refetch: fetchServiceOptions 
+  }
 }

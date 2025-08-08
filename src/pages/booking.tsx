@@ -15,9 +15,9 @@ import { Calendar, Lock } from "lucide-react"
 type BookingFormErrors = Partial<Record<keyof ContactDetails | keyof AddressDetails | "selectedDate" | "form", string>>
 
 const initialBookingData: BookingData = {
-  serviceType: "residential",
+  serviceType: "", // Start with empty string instead of hardcoded value
   propertyInfo: { bedrooms: 1, bathrooms: 1 },
-  frequency: "one-time",
+  frequency: "", // Start with empty string
   selectedDate: undefined,
   selectedExtras: [],
   contactDetails: { firstName: "", lastName: "", email: "", phone: "" },
@@ -33,18 +33,7 @@ export const BookingPage = () => {
 
   const { serviceTypes } = useServiceTypes()
   const { serviceFrequencies } = useServiceFrequencies()
-  const { serviceOptions } = useServiceOptions()
-
-  // useEffect(() => {
-  //   const loadInitialData = async () => {
-  //     try {
-  //       await fetchUnavailableDates()
-  //     } catch (error) {
-  //       console.error("Failed to load unavailable dates:", error)
-  //     }
-  //   }
-  //   loadInitialData()
-  // }, [])
+  const { allServiceOptions } = useServiceOptions() // Get all service options for calculations
 
   const validateAndProceedStep1 = async (): Promise<boolean> => {
     if (!postalCode.trim()) {
@@ -57,6 +46,16 @@ export const BookingPage = () => {
       const result = await apiService.validatePostalCode(postalCode)
       if (!result.isValid) {
         setErrors({ form: "Please enter a valid postal code in our service area" })
+        return false
+      }
+
+      if (!bookingData.serviceType) {
+        setErrors({ form: "Please select a service type" })
+        return false
+      }
+
+      if (!bookingData.frequency) {
+        setErrors({ form: "Please select a frequency" })
         return false
       }
 
@@ -120,7 +119,7 @@ export const BookingPage = () => {
   }, [])
 
   const getButtonText = () => {
-    const total = calculateGrandTotal(bookingData, 0.1, serviceTypes, serviceFrequencies, serviceOptions)
+    const total = calculateGrandTotal(bookingData, 0.1, serviceTypes, serviceFrequencies, allServiceOptions)
     return currentStep < 3 ? "Next" : `Pay $${total.toFixed(2)}`
   }
 
@@ -146,6 +145,7 @@ export const BookingPage = () => {
               <Step2AddOns
                 selectedExtras={bookingData.selectedExtras}
                 onExtrasChange={(selectedExtras) => updateBookingData({ selectedExtras })}
+                selectedServiceTypeId={bookingData.serviceType}
               />
             )}
 
@@ -154,7 +154,7 @@ export const BookingPage = () => {
                 bookingData={bookingData}
                 onBookingDataChange={updateBookingData}
                 errors={errors}
-                total={calculateGrandTotal(bookingData, 0.1, serviceTypes, serviceFrequencies, serviceOptions)}
+                total={calculateGrandTotal(bookingData, 0.1, serviceTypes, serviceFrequencies, allServiceOptions)}
               />
             )}
 
@@ -168,7 +168,7 @@ export const BookingPage = () => {
               {currentStep > 1 && (
                 <button
                   onClick={handlePrevious}
-                  className="flex-1 bg-gold text-white py-3 px-6 rounded-md font-medium hover:scale-105 transition-transform"
+                  className="flex-1 bg-[#8A7C3D] text-white py-3 px-6 rounded-md font-medium hover:scale-105 transition-transform"
                 >
                   Previous
                 </button>
@@ -176,7 +176,7 @@ export const BookingPage = () => {
               {currentStep < 3 && (
                 <button
                   onClick={handleNext}
-                  className="flex-1 bg-gold text-white py-3 px-6 rounded-md font-medium hover:scale-105 transition-transform"
+                  className="flex-1 bg-[#8A7C3D] text-white py-3 px-6 rounded-md font-medium hover:scale-105 transition-transform"
                 >
                   {getButtonText()}
                 </button>
@@ -190,7 +190,7 @@ export const BookingPage = () => {
               <BookingSummary
                 bookingData={bookingData}
                 postalCode={postalCode}
-                serviceOptions={serviceOptions}
+                serviceOptions={allServiceOptions}
               />
             ) : (
               <div className="space-y-6 bg-white p-4 rounded-lg border border-gray-200">
@@ -205,7 +205,7 @@ export const BookingPage = () => {
                       placeholder="Enter Coupon Code"
                       className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#8A7C3D]"
                     />
-                    <button className="px-4 py-2 bg-gold text-white rounded-md hover:bg-gold transition-colors">
+                    <button className="px-4 py-2 bg-[#8A7C3D] text-white rounded-md hover:bg-[#6B5A2E] transition-colors">
                       Apply
                     </button>
                   </div>
@@ -216,15 +216,15 @@ export const BookingPage = () => {
                   <h3 className="text-sm font-medium text-gray-700 mb-3">Pay With</h3>
                   <div className="space-y-2">
                     <label className="flex items-center">
-                      <input type="radio" name="payment" defaultChecked className="mr-2 text-gold focus:ring-[#8A7C3D]" />
+                      <input type="radio" name="payment" defaultChecked className="mr-2 text-[#8A7C3D] focus:ring-[#8A7C3D]" />
                       <span className="text-sm">Debit or Credit Card</span>
                     </label>
                     <label className="flex items-center">
-                      <input type="radio" name="payment" className="mr-2 text-gold focus:ring-[#8A7C3D]" />
+                      <input type="radio" name="payment" className="mr-2 text-[#8A7C3D] focus:ring-[#8A7C3D]" />
                       <span className="text-sm">Pay Cash on Service</span>
                     </label>
                     <label className="flex items-center">
-                      <input type="radio" name="payment" className="mr-2 text-gold focus:ring-[#8A7C3D]" />
+                      <input type="radio" name="payment" className="mr-2 text-[#8A7C3D] focus:ring-[#8A7C3D]" />
                       <span className="text-sm">Bank Transfer</span>
                     </label>
                   </div>
@@ -255,26 +255,26 @@ export const BookingPage = () => {
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Sub Total</span>
                     <span>
-                      ${((calculateGrandTotal(bookingData, 0.1, serviceTypes, serviceFrequencies, serviceOptions) * 10) / 11).toFixed(2)}
+                      ${((calculateGrandTotal(bookingData, 0.1, serviceTypes, serviceFrequencies, allServiceOptions) * 10) / 11).toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Tax (10%)</span>
                     <span>
-                      ${((calculateGrandTotal(bookingData, 0.1, serviceTypes, serviceFrequencies, serviceOptions) * 0.1) / 1.1).toFixed(2)}
+                      ${((calculateGrandTotal(bookingData, 0.1, serviceTypes, serviceFrequencies, allServiceOptions) * 0.1) / 1.1).toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between font-medium text-lg border-t pt-2 mt-2">
                     <span>Total</span>
-                    <span className="text-gold">
-                      ${calculateGrandTotal(bookingData, 0.1, serviceTypes, serviceFrequencies, serviceOptions).toFixed(2)}
+                    <span className="text-[#8A7C3D]">
+                      ${calculateGrandTotal(bookingData, 0.1, serviceTypes, serviceFrequencies, allServiceOptions).toFixed(2)}
                     </span>
                   </div>
                 </div>
 
                 <button
                   onClick={handleNext}
-                  className="w-full bg-gold text-white py-3 px-6 rounded-md font-medium hover:scale-105 transition-transform"
+                  className="w-full bg-[#8A7C3D] text-white py-3 px-6 rounded-md font-medium hover:scale-105 transition-transform"
                 >
                   {getButtonText()}
                 </button>

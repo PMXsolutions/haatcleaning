@@ -1,4 +1,5 @@
 import axios from "axios"
+import Cookies from 'js-cookie'
 
 // Create axios instance with default config
 const axiosInstance = axios.create({
@@ -10,7 +11,8 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     // Get token from localStorage or other storage mechanism
-    const authToken = localStorage.getItem("authToken")
+    // const authToken = localStorage.getItem("authToken")
+    const authToken = Cookies.get("authToken")
 
     if (authToken) {
       config.headers["Authorization"] = `Bearer ${authToken}`
@@ -34,11 +36,16 @@ axiosInstance.interceptors.response.use(
         case 401: // Unauthorized
         case 403: // Forbidden
           // Handle authentication errors
-          localStorage.removeItem("authToken")
+          // localStorage.removeItem("authToken")
+          Cookies.remove("authToken")
+          Cookies.remove("tokenExpiration")
           // Store current path for redirect after login
           localStorage.setItem("redirectPath", window.location.pathname)
           // Redirect to login page
           // window.location.href = '/login';
+          if (!window.location.pathname.includes('/login')) {
+            window.location.href = '/login'
+          }
           break
         case 404:
           // Handle not found errors

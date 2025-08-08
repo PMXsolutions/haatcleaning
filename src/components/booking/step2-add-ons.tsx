@@ -5,16 +5,21 @@ import { useState } from "react"
 
 import { useServiceOptions } from "@/hooks/useApi"
 import type { SelectedExtra } from "@/types"
-import { Check, Plus, Minus } from "lucide-react"
+import { Check, Plus, Minus, WifiOff } from "lucide-react"
 
 interface Step2Props {
   selectedExtras: SelectedExtra[]
   onExtrasChange: (extras: SelectedExtra[]) => void
+  selectedServiceTypeId: string // Add this prop to filter service options
 }
 
-export const Step2AddOns: React.FC<Step2Props> = ({ selectedExtras, onExtrasChange }) => {
+export const Step2AddOns: React.FC<Step2Props> = ({ 
+  selectedExtras, 
+  onExtrasChange, 
+  selectedServiceTypeId 
+}) => {
   const [otherServiceText, setOtherServiceText] = useState("")
-  const { serviceOptions } = useServiceOptions()
+  const { serviceOptions, loading, error, usingFallback } = useServiceOptions(selectedServiceTypeId)
   
   const addOns = [
     ...serviceOptions.map(option => ({
@@ -39,11 +44,6 @@ export const Step2AddOns: React.FC<Step2Props> = ({ selectedExtras, onExtrasChan
     const selected = getSelectedExtra(id)
     return selected ? selected.quantity : 0
   }
-
-  // const getSelectedSize = (id: string): Size => {
-  //   const selected = getSelectedExtra(id)
-  //   return selected?.size || "SM"
-  // }
 
   const isSelected = (id: string) => {
     return selectedExtras.some((extra) => extra.id === id)
@@ -73,7 +73,6 @@ export const Step2AddOns: React.FC<Step2Props> = ({ selectedExtras, onExtrasChan
     if (newQuantity === 0) {
       onExtrasChange(selectedExtras.filter((extra) => extra.id !== id))
     } else {
-      // const currentSize = getSelectedSize(id)
       if (isSelected(id)) {
         const updated = selectedExtras.map((extra) => 
           extra.id === id ? { ...extra, quantity: newQuantity } : extra
@@ -91,24 +90,6 @@ export const Step2AddOns: React.FC<Step2Props> = ({ selectedExtras, onExtrasChan
     }
   }
 
-  // const handleSizeChange = (id: string ) => {
-  //   if (isSelected(id)) {
-  //     const updated = selectedExtras.map((extra) => 
-  //       extra.id === id ? { ...extra, size } : extra
-  //     )
-  //     onExtrasChange(updated)
-  //   } else {
-  //     // If not selected, select it with the chosen size
-  //     const newExtra: SelectedExtra = { 
-  //       id, 
-  //       quantity: 1, 
-  //       size,
-  //       ...(id === "other" && { customText: otherServiceText })
-  //     }
-  //     onExtrasChange([...selectedExtras, newExtra])
-  //   }
-  // }
-
   const handleOtherServiceTextChange = (text: string) => {
     setOtherServiceText(text)
     
@@ -121,15 +102,48 @@ export const Step2AddOns: React.FC<Step2Props> = ({ selectedExtras, onExtrasChan
     }
   }
 
-  // const getCurrentPrice = (addon: typeof addOns[0], id: string) => {
-  //   const selectedSize = getSelectedSize(id)
-  //   return addon.prices[selectedSize]
-  // }
-
   return (
     <div>
-      <h2 className="text-xl font-medium text-gray-900 mb-2">Optional add-ons</h2>
-      <p className="text-sm text-gray-600 mb-6">e.g., Window Washing, Gutter Cleaning, etc.</p>
+      <div className="flex items-center gap-2 mb-2">
+        <h2 className="text-xl font-medium text-gray-900">Optional add-ons</h2>
+        {usingFallback && <WifiOff className="h-4 w-4 text-gray-400" />}
+      </div>
+      <p className="text-sm text-gray-600 mb-6">Add extra services specific to your selected service type</p>
+
+      {/* Fallback indicator */}
+      {usingFallback && (
+        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+          <div className="flex items-center">
+            <WifiOff className="h-4 w-4 text-yellow-600 mr-2" />
+            <p className="text-sm text-yellow-800">
+              Showing offline add-on options. Online features may be limited.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Loading state */}
+      {loading && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+          <p className="text-sm text-blue-600">Loading available add-ons...</p>
+        </div>
+      )}
+
+      {/* Error state (only show if not using fallback) */}
+      {error && !usingFallback && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
+
+      {/* No add-ons available */}
+      {!loading && addOns.length === 1 && addOns[0].id === "other" && (
+        <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-md">
+          <p className="text-sm text-gray-600">
+            No specific add-ons available for this service type. You can still request other services below.
+          </p>
+        </div>
+      )}
 
       <div className="space-y-4">
         {addOns.map((addon) => (
@@ -139,7 +153,7 @@ export const Step2AddOns: React.FC<Step2Props> = ({ selectedExtras, onExtrasChan
                 <button
                   onClick={() => handleToggle(addon.id)}
                   className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                    isSelected(addon.id) ? "bg-gold border-[#8A7C3D] text-white" : "border-gray-300"
+                    isSelected(addon.id) ? "bg-[#8A7C3D] border-[#8A7C3D] text-white" : "border-gray-300"
                   }`}
                 >
                   {isSelected(addon.id) && <Check className="w-3 h-3" />}
@@ -150,47 +164,9 @@ export const Step2AddOns: React.FC<Step2Props> = ({ selectedExtras, onExtrasChan
               <div className="flex items-center space-x-4">
                 {addon.id !== "other" && (
                   <span className="text-sm text-gray-600">
-                    $ {addon.price.toFixed(2)} / Day
+                    ${addon.price.toFixed(2)} / unit
                   </span>
                 )}
-
-                {/* {addon.hasQuantity && (
-                  <div className="flex items-center space-x-2">
-                    <div className="flex items-center space-x-1 text-xs">
-                      {(["SM", "MD", "BG"] as Size[]).map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => handleSizeChange(addon.id, size)}
-                          className={`px-2 py-1 rounded text-xs transition-colors ${
-                            getSelectedSize(addon.id) === size
-                              ? "bg-gold text-white"
-                              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="flex items-center border border-gray-300 rounded">
-                      <button 
-                        onClick={() => handleQuantityChange(addon.id, -1)} 
-                        className="p-1 hover:bg-gray-100"
-                      >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                      <span className="px-3 py-1 text-sm font-medium">
-                        {getSelectedQuantity(addon.id)}
-                      </span>
-                      <button 
-                        onClick={() => handleQuantityChange(addon.id, 1)} 
-                        className="p-1 hover:bg-gray-100"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                )} */}
 
                 {addon.hasQuantity && (
                   <div className="flex items-center border border-gray-300 rounded">
@@ -208,7 +184,7 @@ export const Step2AddOns: React.FC<Step2Props> = ({ selectedExtras, onExtrasChan
 
                 <button
                   onClick={() => handleToggle(addon.id)}
-                  className="px-4 py-2 border border-[#8A7C3D] text-gold rounded hover:bg-gold hover:text-white transition-colors"
+                  className="px-4 py-2 border border-[#8A7C3D] text-[#8A7C3D] rounded hover:bg-[#8A7C3D] hover:text-white transition-colors"
                 >
                   {isSelected(addon.id) ? "Remove" : "Add"}
                 </button>

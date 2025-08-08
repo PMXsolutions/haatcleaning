@@ -77,9 +77,9 @@ export interface SelectedExtra {
 
 // Combined Booking Data
 export interface BookingData {
-  serviceType: ServiceType
+  serviceType: string
   propertyInfo: PropertyInfo;
-  frequency: Frequency;
+  frequency: string;
   selectedDate: Date | undefined;
   selectedExtras: SelectedExtra[];
   contactDetails: ContactDetails;

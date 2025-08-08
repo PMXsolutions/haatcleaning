@@ -1,8 +1,8 @@
 "use client"
 
 import React, { useEffect } from "react"
-import type { BookingData, ServiceType, Frequency } from "@/types"
-import { CheckCircle, XCircle, Loader2 } from "lucide-react"
+import type { BookingData } from "@/types"
+import { CheckCircle, XCircle, Loader2, WifiOff } from "lucide-react"
 import { usePostalCodeValidation, useServiceTypes, useServiceFrequencies } from "@/hooks/useApi"
 
 interface Step1Props {
@@ -21,15 +21,12 @@ export const Step1ServiceSelection: React.FC<Step1Props> = ({
 }) => {
   // API hooks
   const { validatePostalCode, isValidating, isValid, areaName, error: postalError } = usePostalCodeValidation()
-  const { serviceTypes: apiServiceTypes, loading: serviceTypesLoading, error: serviceTypesError } = useServiceTypes()
-  const { serviceFrequencies: apiServiceFrequencies, loading: frequenciesLoading, error: frequenciesError } = useServiceFrequencies()
+  const { serviceTypes, loading: serviceTypesLoading, error: serviceTypesError, usingFallback: serviceTypesFallback } = useServiceTypes()
+  const { serviceFrequencies, loading: frequenciesLoading, error: frequenciesError, usingFallback: frequenciesFallback } = useServiceFrequencies()
 
-  // Use API service types directly - no mapping needed
-  const serviceTypes = apiServiceTypes || []
-  
   // Map API service frequencies to the format expected by the UI
-  const frequencies = apiServiceFrequencies.map(freq => ({
-    id: freq.frequency.toLowerCase().replace(/\s+/g, '-') as Frequency,
+  const frequencies = serviceFrequencies.map(freq => ({
+    id: freq.serviceFrequencyId,
     title: freq.frequency,
     discountPercentage: freq.discountPercentage,
     serviceFrequencyId: freq.serviceFrequencyId
@@ -110,6 +107,18 @@ export const Step1ServiceSelection: React.FC<Step1Props> = ({
 
   return (
     <div className="space-y-8">
+      {/* Fallback Data Indicators */}
+      {(serviceTypesFallback || frequenciesFallback) && (
+        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+          <div className="flex items-center">
+            <WifiOff className="h-4 w-4 text-yellow-600 mr-2" />
+            <p className="text-sm text-yellow-800">
+              Operating in offline mode. Some features may be limited.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Postal Code with Validation */}
       <div>
         <label className="block text-sm font-medium text-gray-900 mb-2">
@@ -159,7 +168,10 @@ export const Step1ServiceSelection: React.FC<Step1Props> = ({
 
       {/* Service Type */}
       <div className={shouldDisableOptions ? "opacity-50 pointer-events-none" : ""}>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Service type</h3>
+        <div className="flex items-center gap-2 mb-2">
+          <h3 className="text-lg font-medium text-gray-900">Service type</h3>
+          {serviceTypesFallback && <WifiOff className="h-4 w-4 text-gray-400" />}
+        </div>
         <p className="text-sm text-gray-600 mb-4">
           {shouldDisableOptions 
             ? "Please enter a valid postal code to select service type" 
@@ -167,7 +179,7 @@ export const Step1ServiceSelection: React.FC<Step1Props> = ({
           }
         </p>
         
-        {serviceTypesError && (
+        {serviceTypesError && !serviceTypesFallback && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
             <p className="text-sm text-red-600">Failed to load service types. Please refresh the page.</p>
           </div>
@@ -184,7 +196,7 @@ export const Step1ServiceSelection: React.FC<Step1Props> = ({
             return (
               <button
                 key={service.serviceTypeId}
-                onClick={() => onBookingDataChange({ serviceType: service.serviceTypeId as ServiceType })}
+                onClick={() => onBookingDataChange({ serviceType: service.serviceTypeId })}
                 disabled={serviceTypesLoading || shouldDisableOptions}
                 className={`p-6 border-2 rounded-lg text-center transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
                   bookingData.serviceType === service.serviceTypeId
@@ -203,7 +215,10 @@ export const Step1ServiceSelection: React.FC<Step1Props> = ({
 
       {/* Frequency */}
       <div className={shouldDisableOptions ? "opacity-50 pointer-events-none" : ""}>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">How often</h3>
+        <div className="flex items-center gap-2 mb-2">
+          <h3 className="text-lg font-medium text-gray-900">How often</h3>
+          {frequenciesFallback && <WifiOff className="h-4 w-4 text-gray-400" />}
+        </div>
         <p className="text-sm text-gray-600 mb-4">
           {shouldDisableOptions 
             ? "Please enter a valid postal code to select frequency" 
@@ -211,7 +226,7 @@ export const Step1ServiceSelection: React.FC<Step1Props> = ({
           }
         </p>
         
-        {frequenciesError && (
+        {frequenciesError && !frequenciesFallback && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
             <p className="text-sm text-red-600">Failed to load service frequencies. Please refresh the page.</p>
           </div>

@@ -18,7 +18,7 @@ import ContactUsPage from '@/pages/contactUs';
 import { ResidentialServicePage } from '@/pages/services/residential';
 import { AirBnBServicePage } from '@/pages/services/airbnb';
 import { CommercialServicePage } from '@/pages/services/commercial';
-import { AuthProvider } from '@/components/shared/AuthProvider';
+// import { AuthProvider } from '@/components/shared/AuthProvider';
 
 function AppContent() {
   const location = useLocation();
@@ -60,11 +60,11 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <Router>
+      <AppContent />
+    </Router>
+    // <AuthProvider>
+    // </AuthProvider>
   );
 }
 

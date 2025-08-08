@@ -330,24 +330,24 @@ export const Navbar = () => {
                     variant="primary"
                   />
                 </Link>
-                <button
+                <Button 
                   onClick={handleDashboard}
+                  label="Dashboard" 
                   className="w-full"
-                >
-                  <Button 
-                    label="Dashboard" 
-                    variant="outline"
-                  />
-                </button>
-                <button
+                  variant="outline"
+                />
+                {/* <button
+                  >
+                </button> */}
+                <Button 
                   onClick={handleLogout}
+                  label="Logout" 
                   className="w-full"
-                >
-                  <Button 
-                    label="Logout" 
-                    variant="outline"
-                  />
-                </button>
+                  variant="outline"
+                />
+                {/* <button
+                  >
+                </button> */}
               </li>
             ) : (
               <li className="flex flex-col gap-3 pt-6">
