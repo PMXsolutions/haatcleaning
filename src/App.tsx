@@ -18,7 +18,7 @@ import ContactUsPage from '@/pages/contactUs';
 import { ResidentialServicePage } from '@/pages/services/residential';
 import { AirBnBServicePage } from '@/pages/services/airbnb';
 import { CommercialServicePage } from '@/pages/services/commercial';
-// import { AuthProvider } from '@/components/shared/AuthProvider';
+import AuthWrapper from '@/components/shared/AuthWrapper';
 
 function AppContent() {
   const location = useLocation();
@@ -35,22 +35,63 @@ function AppContent() {
       <main className="">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/dashboard/*" element={<DashboardLayout />}>
+          
+          {/* Protected Dashboard Routes */}
+          <Route 
+            path="/dashboard/*" 
+            element={
+              <AuthWrapper mode="protected">
+                <DashboardLayout />
+              </AuthWrapper>
+            }
+          >
             <Route index element={<DashboardHome />} />
             <Route path="service-areas" element={<ServiceAreas />} />
             <Route path="service-types" element={<ServiceTypes />} />
             <Route path="service-options" element={<ServiceOptions />} />
             <Route path="service-frequency" element={<ServiceFrequencies />} />
           </Route>
+
+          {/* Public Routes */}
           <Route path="/booking" element={<BookingPage />} />
           <Route path="/contactUs" element={<ContactUsPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/create-password" element={<CreateNewPassword />} />
           <Route path="/services/residential" element={<ResidentialServicePage />} />
           <Route path="/services/commercial" element={<CommercialServicePage />} />
           <Route path="/services/airbnb" element={<AirBnBServicePage />} />
+
+          {/* Auth Routes - Redirect if already authenticated */}
+          <Route 
+            path="/login" 
+            element={
+              <AuthWrapper mode="auth">
+                <Login />
+              </AuthWrapper>
+            } 
+          />
+          <Route 
+            path="/signup" 
+            element={
+              <AuthWrapper mode="auth">
+                <SignUp />
+              </AuthWrapper>
+            } 
+          />
+          <Route 
+            path="/forgot-password" 
+            element={
+              <AuthWrapper mode="auth">
+                <ForgotPassword />
+              </AuthWrapper>
+            } 
+          />
+          <Route 
+            path="/create-password" 
+            element={
+              <AuthWrapper mode="auth">
+                <CreateNewPassword />
+              </AuthWrapper>
+            } 
+          />
         </Routes>
       </main>
       {!isAuthPage && <Footer />}
@@ -63,8 +104,6 @@ function App() {
     <Router>
       <AppContent />
     </Router>
-    // <AuthProvider>
-    // </AuthProvider>
   );
 }
 

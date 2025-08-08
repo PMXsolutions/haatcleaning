@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import FormLayout from "@/components/shared/form-layout";
@@ -12,8 +12,29 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (isAuthenticated && !authLoading) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, authLoading, navigate]);
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <FormLayout>
+        <div className="bg-white rounded-xl p-8 w-full font-body flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold mx-auto mb-4"></div>
+            <p className="text-gray-600">Checking authentication...</p>
+          </div>
+        </div>
+      </FormLayout>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +91,7 @@ const Login: React.FC = () => {
             </div>
           </div> */}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" autoComplete="on">
             {errors.general && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
                 {errors.general}
@@ -85,6 +106,9 @@ const Login: React.FC = () => {
               error={errors.email}
               label="Email Address"
               required
+              autoComplete="email"
+              name="email"
+              id="email"
             />
 
             <FormInput
@@ -95,6 +119,9 @@ const Login: React.FC = () => {
               error={errors.password}
               label="Password"
               required
+              autoComplete="current-password"
+              name="password"
+              id="password"
             />
 
             {/* Remember Me Checkbox */}

@@ -1,14 +1,13 @@
-import { useAuthStore } from '@/stores/authStore'
-import { useEffect } from 'react'
-// import { shallow } from 'zustand/shallow'
+import { useEffect } from 'react';
+import useAuthStore from '@/stores/useAuthStore';
 
 export const useAuth = () => {
-  const checkAuth = useAuthStore(state => state.checkAuth)
-  const store = useAuthStore()
-  
-  useEffect(() => {
-    checkAuth()
-  }, [checkAuth])
+  const store = useAuthStore();
+  const checkAuth = useAuthStore(state => state.checkAuth);
 
-  return store
-}
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  return store;
+};
