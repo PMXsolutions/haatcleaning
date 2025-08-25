@@ -5,6 +5,7 @@ import { ServiceType } from '@/api/types';
 import { Modal } from '@/components/shared/Modal';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { Button } from '@/components/shared/button';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -156,7 +157,7 @@ const ServiceTypes: React.FC = () => {
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            {/* <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left">
@@ -200,7 +201,53 @@ const ServiceTypes: React.FC = () => {
                   ))
                 )}
               </tbody>
-            </table>
+            </table> */}
+            <Table className="w-full">
+              <TableHeader>
+                <TableRow>
+                  <TableCell>
+                    <button onClick={() => handleSort('name')} className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                      Name
+                      <SortIcon field="name" />
+                    </button>
+                  </TableCell>
+                  <TableCell>
+                    <button onClick={() => handleSort('price')} className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                      Price
+                      <SortIcon field="price" />
+                    </button>
+                  </TableCell>
+                  <TableCell className='hidden sm:block text-sm font-medium text-gray-900'>Description</TableCell>
+                  <TableCell className="text-sm font-medium text-gray-900 text-center">Actions</TableCell>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {loading ? (
+                  <TableRow><TableCell colSpan={4} className="px-6 py-8 text-center text-gray-500">Loading...</TableCell></TableRow>
+                ) : paginatedTypes.length === 0 ? (
+                  <TableRow><TableCell colSpan={4} className="px-6 py-8 text-center text-gray-500">No service types found.</TableCell></TableRow>
+                ) : (
+                  paginatedTypes.map((type) => (
+                    <TableRow key={type.serviceTypeId} className="hover:bg-gray-50">
+                      <TableCell className="p-2 text-sm font-medium text-gray-900">{type.name}</TableCell>
+                      <TableCell className="p-2 text-sm text-gray-600">${type.price}</TableCell>
+                      <TableCell className="p-2 hidden sm:block text-sm text-gray-600">{type.description}</TableCell>
+                      <TableCell className="p-2 text-right">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+                          <button onClick={() => { setSelectedType(type); reset(type); setIsEditModalOpen(true); }} className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-700 bg-green-100 rounded-md hover:bg-green-200">
+                            <FiEdit2 className="w-3 h-3 mr-1" /> Edit
+                          </button>
+                          <button onClick={() => { setSelectedType(type); setIsDeleteDialogOpen(true); }} className="inline-flex items-center px-3 py-1 text-sm font-medium text-red-700 bg-red-100 rounded-md hover:bg-red-200">
+                            <FiTrash2 className="w-3 h-3 mr-1" /> Delete
+                          </button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </div>
 
           {/* Pagination */}

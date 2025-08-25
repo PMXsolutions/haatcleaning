@@ -90,17 +90,17 @@ export const Step2AddOns: React.FC<Step2Props> = ({
     }
   }
 
-  const handleOtherServiceTextChange = (text: string) => {
-    setOtherServiceText(text)
+  // const handleOtherServiceTextChange = (text: string) => {
+  //   setOtherServiceText(text)
     
-    // Update the selected extra if it's already selected
-    if (isSelected("other")) {
-      const updated = selectedExtras.map((extra) => 
-        extra.id === "other" ? { ...extra, customText: text } : extra
-      )
-      onExtrasChange(updated)
-    }
-  }
+  //   // Update the selected extra if it's already selected
+  //   if (isSelected("other")) {
+  //     const updated = selectedExtras.map((extra) => 
+  //       extra.id === "other" ? { ...extra, customText: text } : extra
+  //     )
+  //     onExtrasChange(updated)
+  //   }
+  // }
 
   return (
     <div>
@@ -192,7 +192,7 @@ export const Step2AddOns: React.FC<Step2Props> = ({
             </div>
 
             {/* Text box for "Other Service Not Listed" */}
-            {addon.id === "other" && isSelected(addon.id) && (
+            {/* {addon.id === "other" && isSelected(addon.id) && (
               <div className="px-4 pb-4 border-t border-gray-100">
                 <label htmlFor="other-service-text" className="block text-sm font-medium text-gray-700 mb-2">
                   Please describe the service you need:
@@ -206,7 +206,7 @@ export const Step2AddOns: React.FC<Step2Props> = ({
                   rows={3}
                 />
               </div>
-            )}
+            )} */}
           </div>
         ))}
       </div>

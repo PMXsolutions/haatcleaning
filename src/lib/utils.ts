@@ -94,22 +94,23 @@ export const formatCurrency = (amount: number, currency = "USD"): string => {
   }).format(amount)
 }
 
+// Format frequency for display
+export const formatFrequency = (frequency?: string): string => {
+  if (!frequency) return "Select frequency"
+  return frequency.charAt(0).toUpperCase() + frequency.slice(1).replace(/-/g, ' ')
+}
+
 // Format date/time
 export const formatDate = (date: Date): string => new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric" }).format(date)
 export const formatTime = (date: Date): string => new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", hour12: true }).format(date)
 
-// Validation helpers
-export const validateEmail = (email: string): boolean => /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)
-export const validatePhone = (phone: string): boolean => /^\\d{10,15}$/.test(phone.replace(/\\D/g, ""))
-export const validatePostalCode = (postalCode: string): boolean => /^[A-Za-z0-9\\s-]{3,10}$/.test(postalCode.trim())
-
 // String utils
-export const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1)
-export const formatFrequency = (frequency: string): string => {
-  switch (frequency) {
-    case "one-time":
-    case "one-off": return "One Time"
-    case "bi-weekly": return "Bi-Weekly"
-    default: return capitalize(frequency)
-  }
-}
+// export const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1)
+// export const formatFrequency = (frequency: string): string => {
+//   switch (frequency) {
+//     case "one-time":
+//     case "one-off": return "One Time"
+//     case "bi-weekly": return "Bi-Weekly"
+//     default: return capitalize(frequency)
+//   }
+// }

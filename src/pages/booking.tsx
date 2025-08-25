@@ -1,28 +1,31 @@
 "use client"
 
 import { useState, useCallback } from "react"
+import toast from "react-hot-toast"
 import type { BookingData, ContactDetails, AddressDetails } from "@/types"
 import { StepIndicator } from "@/components/booking/step-indicator"
 import { Step1ServiceSelection } from "@/components/booking/step1-service-selection"
 import { Step2AddOns } from "@/components/booking/step2-add-ons"
 import { Step3Billing } from "@/components/booking/step3-billing"
+import { Step4Confirmation } from "@/components/booking/step4-confirmation"
 import { BookingSummary } from "@/components/booking/booking-summary"
 import { calculateGrandTotal } from "@/lib/utils"
 import { apiService } from "@/api/services"
 import { useServiceTypes, useServiceFrequencies, useServiceOptions } from "@/hooks/useApi"
-import { Calendar, Lock } from "lucide-react"
+// import { Calendar, Lock } from "lucide-react"
+import type { CreateBookingRequest } from "@/api/types"
 
 type BookingFormErrors = Partial<Record<keyof ContactDetails | keyof AddressDetails | "selectedDate" | "form", string>>
 
 const initialBookingData: BookingData = {
-  serviceType: "", // Start with empty string instead of hardcoded value
-  propertyInfo: { bedrooms: 1, bathrooms: 1 },
-  frequency: "", // Start with empty string
+  serviceType: "",
+  // propertyInfo: { bedrooms: 1, bathrooms: 1 },
+  frequency: "",
   selectedDate: undefined,
   selectedExtras: [],
   contactDetails: { firstName: "", lastName: "", email: "", phone: "" },
   addressDetails: { street: "", city: "", zipCode: "" },
-  specialInstructions: "",
+  // specialInstructions: "",
 }
 
 export const BookingPage = () => {
@@ -30,10 +33,11 @@ export const BookingPage = () => {
   const [bookingData, setBookingData] = useState<BookingData>(initialBookingData)
   const [errors, setErrors] = useState<BookingFormErrors>({})
   const [postalCode, setPostalCode] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { serviceTypes } = useServiceTypes()
   const { serviceFrequencies } = useServiceFrequencies()
-  const { allServiceOptions } = useServiceOptions() // Get all service options for calculations
+  const { allServiceOptions } = useServiceOptions() 
 
   const validateAndProceedStep1 = async (): Promise<boolean> => {
     if (!postalCode.trim()) {
@@ -97,13 +101,6 @@ export const BookingPage = () => {
       if (isValid) setCurrentStep(2)
     } else if (currentStep === 2) {
       setCurrentStep(3)
-    } else if (currentStep === 3) {
-      const errors = validateStep3()
-      if (Object.keys(errors).length > 0) {
-        setErrors(errors)
-        return
-      }
-      // handleSubmit()
     }
   }
 
@@ -118,9 +115,153 @@ export const BookingPage = () => {
     setBookingData((prev) => ({ ...prev, ...updates }))
   }, [])
 
+  const clearError = useCallback((field: string) => {
+    setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors[field as keyof BookingFormErrors]
+      return newErrors
+    })
+  }, [])
+
   const getButtonText = () => {
     const total = calculateGrandTotal(bookingData, 0.1, serviceTypes, serviceFrequencies, allServiceOptions)
-    return currentStep < 3 ? "Next" : `Pay $${total.toFixed(2)}`
+    return currentStep < 3 ? "Next" : `Total is $${total.toFixed(2)}`
+  }
+
+  const handleSubmit = async () => {
+    const validationErrors = validateStep3()
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      toast.error("Please fill in all required fields")
+      return
+    }
+
+    if (!bookingData.serviceType || !bookingData.frequency || !bookingData.selectedDate) {
+      setErrors({ form: "Please complete steps 1 & 2 before submitting." })
+      return
+    }
+
+    setIsSubmitting(true)
+    
+    try {
+      // Validate postal code again
+      const areas = await apiService.getAllServiceAreas()
+      const matchedArea = areas.find(a => a.postalCode === postalCode.trim())
+      
+      if (!matchedArea) {
+        setErrors({ form: "Postal code is outside our service area." })
+        setIsSubmitting(false)
+        return
+      }
+
+      const total = calculateGrandTotal(
+        bookingData, 0.1, serviceTypes, serviceFrequencies, allServiceOptions
+      )
+
+      // Filter out invalid service options and ensure proper data
+      const validServiceDetails = bookingData.selectedExtras
+        .filter(extra => extra.id && extra.id !== "other" && extra.quantity > 0)
+        .map(extra => ({ 
+          serviceOptionId: extra.id, 
+          quantity: extra.quantity 
+        }))
+
+      // Log booking data for debugging
+      console.log('Booking data before submission:', {
+        bookingData,
+        postalCode,
+        matchedArea,
+        total,
+        validServiceDetails
+      })
+
+      // Construct the booking payload
+      const payload: CreateBookingRequest = {
+        serviceAreaId: matchedArea.serviceAreaId,
+        serviceTypeId: bookingData.serviceType,
+        serviceFrequencyId: bookingData.frequency,
+        serviceDate: bookingData.selectedDate.toISOString(),
+        totalPrice: Number(total.toFixed(2)),
+        details: JSON.stringify({
+          // propertyInfo: bookingData.propertyInfo,
+          extras: bookingData.selectedExtras,
+          // specialInstructions: bookingData.specialInstructions || ""
+        }),
+        customerName: `${bookingData.contactDetails.firstName.trim()} ${bookingData.contactDetails.lastName.trim()}`,
+        customerEmail: bookingData.contactDetails.email.trim(),
+        customerPhone: bookingData.contactDetails.phone.trim(),
+        customerAddress: bookingData.addressDetails.street.trim(),
+        customerCity: bookingData.addressDetails.city.trim(),
+        serviceDetails: validServiceDetails
+      }
+
+      console.log('Submitting booking payload:', payload)
+
+      // Validate required fields
+      if (!payload.serviceAreaId || !payload.serviceTypeId || !payload.serviceFrequencyId) {
+        throw new Error("Missing required service information")
+      }
+
+      if (!payload.customerName || !payload.customerEmail || !payload.customerPhone) {
+        throw new Error("Missing required customer information")
+      }
+
+      if (!payload.customerAddress || !payload.customerCity) {
+        throw new Error("Missing required address information")
+      }
+
+      const result = await apiService.createBooking(payload)
+      console.log('Booking created successfully:', result)
+      
+      toast.success("Booking created successfully!")
+      
+      // Reset form or redirect to confirmation
+      setCurrentStep(4)
+      
+    } catch (error: unknown) {
+      console.error('Booking submission error:', error)
+      
+      let errorMessage = "Failed to create booking. Please try again."
+      
+      // Handle different types of errors
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response: { status: number; data?: unknown } }
+        const status = axiosError.response.status
+        const data = axiosError.response.data
+        
+        if (status === 400) {
+          errorMessage = "Invalid booking data. Please check all fields."
+        } else if (status === 500) {
+          errorMessage = "Server error occurred. Please try again later."
+        } else if (status === 404) {
+          errorMessage = "Service not found. Please refresh and try again."
+        }
+        
+        console.error('Server response:', data)
+      } else if (error && typeof error === 'object' && 'code' in error) {
+        const networkError = error as { code: string; message: string }
+        if (networkError.code === 'ERR_NETWORK') {
+          errorMessage = "Network error. Please check your internet connection and try again."
+        } else {
+          errorMessage = networkError.message || errorMessage
+        }
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        const errorWithMessage = error as { message: string }
+        errorMessage = errorWithMessage.message
+      }
+      
+      toast.error(errorMessage)
+      setErrors({ form: errorMessage })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleStartNewBooking = () => {
+    setBookingData(initialBookingData)
+    setCurrentStep(1)
+    setPostalCode("")
+    setErrors({})
   }
 
   return (
@@ -155,6 +296,14 @@ export const BookingPage = () => {
                 onBookingDataChange={updateBookingData}
                 errors={errors}
                 total={calculateGrandTotal(bookingData, 0.1, serviceTypes, serviceFrequencies, allServiceOptions)}
+                onClearError={clearError}
+              />
+            )}
+
+            {currentStep === 4 && (
+              <Step4Confirmation
+                bookingData={bookingData}
+                onStartNewBooking={handleStartNewBooking}
               />
             )}
 
@@ -164,24 +313,29 @@ export const BookingPage = () => {
               </div>
             )}
 
-            <div className="mt-8 flex gap-4">
-              {currentStep > 1 && (
-                <button
-                  onClick={handlePrevious}
-                  className="flex-1 bg-[#8A7C3D] text-white py-3 px-6 rounded-md font-medium hover:scale-105 transition-transform"
-                >
-                  Previous
-                </button>
-              )}
-              {currentStep < 3 && (
-                <button
-                  onClick={handleNext}
-                  className="flex-1 bg-[#8A7C3D] text-white py-3 px-6 rounded-md font-medium hover:scale-105 transition-transform"
-                >
-                  {getButtonText()}
-                </button>
-              )}
-            </div>
+            {/* Navigation Buttons */}
+            {currentStep < 4 && (
+              <div className="mt-8 flex gap-4">
+                {currentStep > 1 && (
+                  <button
+                    onClick={handlePrevious}
+                    disabled={isSubmitting}
+                    className="flex-1 bg-gold text-white py-3 px-6 rounded-md font-medium hover:scale-105 transition-transform disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+                )}
+                {currentStep < 3 && (
+                  <button
+                    onClick={handleNext}
+                    disabled={isSubmitting}
+                    className="flex-1 bg-gold text-white py-3 px-6 rounded-md font-medium hover:scale-105 transition-transform disabled:opacity-50"
+                  >
+                    {getButtonText()}
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -215,13 +369,13 @@ export const BookingPage = () => {
                 <div>
                   <h3 className="text-sm font-medium text-gray-700 mb-3">Pay With</h3>
                   <div className="space-y-2">
-                    <label className="flex items-center">
+                    {/* <label className="flex items-center">
                       <input type="radio" name="payment" defaultChecked className="mr-2 text-[#8A7C3D] focus:ring-[#8A7C3D]" />
                       <span className="text-sm">Debit or Credit Card</span>
-                    </label>
+                    </label> */}
                     <label className="flex items-center">
-                      <input type="radio" name="payment" className="mr-2 text-[#8A7C3D] focus:ring-[#8A7C3D]" />
-                      <span className="text-sm">Pay Cash on Service</span>
+                      <input type="radio" name="payment" className="mr-2 text-[#8A7C3D] focus:ring-[#8A7C3D]" disabled/>
+                      <span className="text-sm">Pay with card (unavailable)</span>
                     </label>
                     <label className="flex items-center">
                       <input type="radio" name="payment" className="mr-2 text-[#8A7C3D] focus:ring-[#8A7C3D]" />
@@ -231,7 +385,7 @@ export const BookingPage = () => {
                 </div>
 
                 {/* Card info */}
-                <div>
+                {/* <div>
                   <h3 className="text-sm font-medium text-gray-700 mb-3">Card Details</h3>
                   <div className="space-y-4">
                     <input type="text" placeholder="Cardholder Name" className="w-full px-3 py-2 border rounded-md" />
@@ -248,7 +402,7 @@ export const BookingPage = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Total Summary */}
                 <div className="pt-2 border-t space-y-2">
@@ -273,10 +427,11 @@ export const BookingPage = () => {
                 </div>
 
                 <button
-                  onClick={handleNext}
-                  className="w-full bg-[#8A7C3D] text-white py-3 px-6 rounded-md font-medium hover:scale-105 transition-transform"
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  className="w-full bg-[#8A7C3D] text-white py-3 px-6 rounded-md font-medium hover:scale-105 transition-transform disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  {getButtonText()}
+                  {isSubmitting ? "Processing..." : `Book Now - $${calculateGrandTotal(bookingData, 0.1, serviceTypes, serviceFrequencies, allServiceOptions).toFixed(2)}`}
                 </button>
               </div>
             )}

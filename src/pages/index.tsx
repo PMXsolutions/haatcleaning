@@ -46,12 +46,12 @@ const Home: React.FC = () => {
                   />
                 </Link>
 
-                <Link to='/login'>
+                {/* <Link to='/login'>
                   <Button 
                     label="Login" 
                     variant="outline" 
                   />
-                </Link>
+                </Link> */}
               </div>
             </div>
           </div>

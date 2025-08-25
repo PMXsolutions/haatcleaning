@@ -14,10 +14,10 @@ const DashboardHome: React.FC = () => {
     <div className="p-4 lg:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2 font-heading">
             Welcome back, {user?.firstName}!
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 font-body">
             Here's what's happening with your cleaning service today.
           </p>
         </div>

@@ -257,12 +257,12 @@ export const Navbar = () => {
               </div>
             ) : (
               <div className="sm:flex sm:gap-4">
-                <Link to="/login" className="hidden md:flex">
+                {/* <Link to="/login" className="hidden md:flex">
                   <Button 
                     label="Login" 
                     variant="outline" 
                   />
-                </Link>
+                </Link> */}
 
                 <Link to="/booking" className="hidden md:flex">
                   <Button 
@@ -351,7 +351,7 @@ export const Navbar = () => {
               </li>
             ) : (
               <li className="flex flex-col gap-3 pt-6">
-                <Link 
+                {/* <Link 
                   to="/login" 
                   className="w-full"
                   onClick={() => setIsMenuOpen(false)}
@@ -360,7 +360,7 @@ export const Navbar = () => {
                     label="Login" 
                     variant="outline"
                   />
-                </Link>
+                </Link> */}
                 <Link 
                   to="/booking" 
                   className="w-full"

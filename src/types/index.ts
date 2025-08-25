@@ -71,6 +71,7 @@ export interface AddressDetails {
 export interface SelectedExtra {
   id: string;
   quantity: number;
+  name?: string
   size?: Size; 
   customText?: string;
 }
@@ -78,13 +79,14 @@ export interface SelectedExtra {
 // Combined Booking Data
 export interface BookingData {
   serviceType: string
-  propertyInfo: PropertyInfo;
+  // propertyInfo: PropertyInfo;
   frequency: string;
   selectedDate: Date | undefined;
   selectedExtras: SelectedExtra[];
   contactDetails: ContactDetails;
   addressDetails: AddressDetails;
-  specialInstructions: string;
+  // specialInstructions?: string;
+  totalPrice?: number
 }
 
 // Complete Booking Record (with ID, timestamp, etc.)

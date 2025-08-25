@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import Home from '@/pages/index';
 import { BookingPage } from '@/pages/booking';
 import Login from '@/pages/Login';
+import OtpVerification from '@/pages/verify-otp';
 import SignUp from '@/pages/signUp';
 import ForgotPassword from '@/pages/forgot-password';
 import CreateNewPassword from '@/pages/create-password';
@@ -14,20 +15,28 @@ import ServiceAreas from '@/components/dashboard/ServiceAreas';
 import ServiceFrequencies from '@/components/dashboard/ServiceFrequencies';
 import ServiceTypes from '@/components/dashboard/ServiceTypes';
 import ServiceOptions from '@/components/dashboard/ServiceOptions';
+import PaymentManagement from '@/components/dashboard/paymentMgt';
+import Cleaners from '@/components/dashboard/Cleaners';
+import Bookings from '@/components/dashboard/Bookings';
 import ContactUsPage from '@/pages/contactUs';
 import { ResidentialServicePage } from '@/pages/services/residential';
 import { AirBnBServicePage } from '@/pages/services/airbnb';
 import { CommercialServicePage } from '@/pages/services/commercial';
 import AuthWrapper from '@/components/shared/AuthWrapper';
+import CleanerLayout from "@/components/layouts/CleanerLayout"
+import CleanerBookings from "@/components/Cleaner/CleanerBookings"
+import { Toaster } from 'react-hot-toast';
 
 function AppContent() {
   const location = useLocation();
   const isAuthPage =
     location.pathname === '/login' ||
     location.pathname === '/signup' ||
+    location.pathname === '/verify-otp' ||
     location.pathname === '/forgot-password' ||
     location.pathname === '/create-password' ||
-    location.pathname.startsWith('/dashboard');
+    location.pathname.startsWith('/dashboard') ||
+    location.pathname.startsWith('/cleaner');
 
   return (
     <div className="bg-primary w-full 2xl:max-w-[1900px] mx-auto">
@@ -50,6 +59,20 @@ function AppContent() {
             <Route path="service-types" element={<ServiceTypes />} />
             <Route path="service-options" element={<ServiceOptions />} />
             <Route path="service-frequency" element={<ServiceFrequencies />} />
+            <Route path="bookings" element={<Bookings />} />
+            <Route path="cleaners" element={<Cleaners />} />
+            <Route path="paymentMgt" element={<PaymentManagement />} />
+          </Route>
+
+          <Route
+            path="/Cleaner/*"
+            element={
+              <AuthWrapper mode="protected">
+                <CleanerLayout />
+              </AuthWrapper>
+            }
+          >
+            <Route index element={<CleanerBookings />} />
           </Route>
 
           {/* Public Routes */}
@@ -65,6 +88,14 @@ function AppContent() {
             element={
               <AuthWrapper mode="auth">
                 <Login />
+              </AuthWrapper>
+            } 
+          />
+          <Route 
+            path="/verify-otp" 
+            element={
+              <AuthWrapper mode="auth">
+                <OtpVerification />
               </AuthWrapper>
             } 
           />
@@ -103,6 +134,7 @@ function App() {
   return (
     <Router>
       <AppContent />
+      <Toaster />
     </Router>
   );
 }

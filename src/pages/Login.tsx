@@ -1,9 +1,17 @@
+// Login.tsx - Fixed version with proper role handling
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import FormLayout from "@/components/shared/form-layout";
-// import GoogleSignInButton from "@/components/shared/google-button"
 import FormInput from "@/components/shared/form-input";
+
+// Define role constants to avoid magic strings
+const ROLES = {
+  CLEANER: 'Cleaner',
+  GLOBAL_ADMIN: 'GlobalAdmin',
+  // ADMIN: 'Admin',
+  // Add other roles as needed
+} as const;
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -59,20 +67,68 @@ const Login: React.FC = () => {
     }
 
     try {
-      await login(email, password, rememberMe);
-      navigate('/dashboard');
-    } catch (err) {
-      setErrors({ general: 'Invalid email or password. Please try again.' });
-      console.error('Login error:', err);
+      const userData = await login(email, password, rememberMe);
+      
+      // Handle role-based navigation
+      switch (userData.role) {
+        case ROLES.CLEANER:
+          navigate('/cleaner');
+          break;
+        case ROLES.GLOBAL_ADMIN:
+        // case ROLES.ADMIN:
+          navigate('/dashboard');
+          break;
+        default:
+          // Default to dashboard for unknown roles
+          console.warn(`Unknown role: ${userData.role}`);
+          navigate('/dashboard');
+          break;
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      
+      // Type guard to check if error has axios response structure
+      const isAxiosError = (err: unknown): err is {
+        response?: {
+          data?: {
+            message?: string;
+            user?: unknown;
+          };
+          status?: number;
+        };
+      } => {
+        return typeof err === 'object' && err !== null && 'response' in err;
+      };
+
+      if (isAxiosError(error)) {
+        const { response } = error;
+        
+        // Check if the error is about unverified email
+        if (response?.data?.message?.includes('verify') || 
+            response?.data?.message?.includes('OTP') ||
+            response?.status === 403) {
+          // Redirect to OTP verification page
+          navigate('/verify-otp', { 
+            state: { 
+              email,
+              userData: response?.data?.user 
+            } 
+          });
+        } else {
+          setErrors({ 
+            general: response?.data?.message || 'Invalid email or password. Please try again.' 
+          });
+        }
+      } else {
+        // Handle non-axios errors
+        setErrors({ 
+          general: error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.' 
+        });
+      }
     } finally {
       setIsLoading(false);
     }
   };
-
-  // const handleGoogleSignIn = () => {
-  //   // Handle Google sign-in logic
-  //   console.log("Google sign-in clicked")
-  // }
 
   return (
     <FormLayout>
@@ -80,17 +136,6 @@ const Login: React.FC = () => {
         <h2 className="text-2xl font-semibold text-center text-gray-800 mb-8">Login</h2>
 
         <div className="space-y-6">
-          {/* <GoogleSignInButton onClick={handleGoogleSignIn} /> */}
-
-          {/* <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">OR</span>
-            </div>
-          </div> */}
-
           <form onSubmit={handleSubmit} className="space-y-4" autoComplete="on">
             {errors.general && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
@@ -163,7 +208,7 @@ const Login: React.FC = () => {
         </div>
       </div>
 
-      <div className="mt-6 text-center">
+      {/* <div className="mt-6 text-center">
         <div className="bg-white rounded-full px-8 py-3 w-fit mx-auto">
           <span className="text-gray-600 text-sm">
             {"Don't have an account? "}
@@ -172,7 +217,7 @@ const Login: React.FC = () => {
             </Link>
           </span>
         </div>
-      </div>
+      </div> */}
     </FormLayout>
   );
 };

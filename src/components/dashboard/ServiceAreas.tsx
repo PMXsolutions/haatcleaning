@@ -13,6 +13,7 @@ import { ServiceArea, CreateServiceAreaRequest } from '@/api/types';
 import { Modal } from '@/components/shared/Modal';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { Button } from '@/components/shared/button';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'; 
 import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -158,8 +159,8 @@ const ServiceAreas: React.FC = () => {
         {/* Header */}
         <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Service Areas</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-2xl font-bold text-gray-900 font-heading">Service Areas</h1>
+            <p className="text-gray-600 mt-1 font-body">
               Manage the regions where your services are available.
             </p>
           </div>
@@ -173,7 +174,7 @@ const ServiceAreas: React.FC = () => {
         </div>
 
         {/* Controls */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6 font-body">
           <div className="p-4 flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
               <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -193,12 +194,12 @@ const ServiceAreas: React.FC = () => {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden font-body">
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left">
+            <Table className="w-full overflow-hidden">
+              <TableHeader>
+                <TableRow>
+                  <TableCell>
                     <button
                       onClick={() => handleSort('areaName')}
                       className="flex items-center gap-2 text-sm font-medium text-gray-900"
@@ -206,8 +207,8 @@ const ServiceAreas: React.FC = () => {
                       Area Name
                       <SortIcon field="areaName" />
                     </button>
-                  </th>
-                  <th className="px-6 py-3 text-left">
+                  </TableCell>
+                  <TableCell>
                     <button
                       onClick={() => handleSort('postalCode')}
                       className="flex items-center gap-2 text-sm font-medium text-gray-900"
@@ -215,32 +216,33 @@ const ServiceAreas: React.FC = () => {
                       Postal Code
                       <SortIcon field="postalCode" />
                     </button>
-                  </th>
-                  <th className="px-6 py-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
+                  </TableCell>
+                  <TableCell className="text-center text-sm font-medium text-gray-900">Actions</TableCell>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
                 {loading ? (
-                  <tr>
-                    <td colSpan={3} className="px-6 py-8 text-center text-gray-500">Loading...</td>
-                  </tr>
+                  <TableRow>
+                    <TableCell colSpan={3} className="px-6 py-8 text-center text-gray-500">Loading...</TableCell>
+                  </TableRow>
                 ) : paginatedAreas.length === 0 ? (
-                  <tr>
-                    <td colSpan={3} className="px-6 py-8 text-center text-gray-500">
+                  <TableRow>
+                    <TableCell colSpan={3} className="px-6 py-8 text-center text-gray-500">
                       No service areas found.
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ) : (
                   paginatedAreas.map((area) => (
-                    <tr key={area.serviceAreaId} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                    <TableRow key={area.serviceAreaId} className="hover:bg-gray-50">
+                      <TableCell className="p-2 text-sm font-medium text-gray-900">
                         {area.areaName}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+                      </TableCell>
+                      <TableCell className="p-2 text-sm text-gray-600">
                         {area.postalCode}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                      </TableCell>
+                      <TableCell className="p-2">
+                        <div className="flex flex-col md:flex-row items-center justify-center gap-2">
                           <button
                             onClick={() => {
                               setSelectedArea(area);
@@ -263,12 +265,12 @@ const ServiceAreas: React.FC = () => {
                             Delete
                           </button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
 
           {/* Pagination */}
@@ -301,7 +303,7 @@ const ServiceAreas: React.FC = () => {
         }}
         title={isEditModalOpen ? 'Edit Service Area' : 'Add Service Area'}
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 font-body">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Area Name

@@ -8,6 +8,7 @@ export interface User {
   role: string;
   token: string;
   tokenExpiration: string;
+  // isEmailVerified: boolean;
 }
 
 export interface LoginResponse {

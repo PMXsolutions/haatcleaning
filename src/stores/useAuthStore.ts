@@ -1,3 +1,4 @@
+
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { User, LoginResponse, LoginRequest } from "@/types/auth";
@@ -9,7 +10,7 @@ interface AuthState {
   user: User | null;
   token: string | null;
   isLoading: boolean;
-  login: (email: string, password: string, rememberMe: boolean) => Promise<void>;
+  login: (email: string, password: string, rememberMe: boolean) => Promise<User>;
   logout: () => void;
   setLoading: (loading: boolean) => void;
   checkAuth: () => void;
@@ -24,7 +25,7 @@ const useAuthStore = create<AuthState>()(
       token: null,
       isLoading: true,
 
-      login: async (email: string, password: string, rememberMe: boolean) => {
+      login: async (email: string, password: string, rememberMe: boolean): Promise<User> => {
         try {
           set({ isLoading: true });
 
@@ -45,6 +46,9 @@ const useAuthStore = create<AuthState>()(
               token: userData.token,
               isLoading: false
             });
+
+            // Return the user data
+            return userData;
           } else {
             throw new Error(data.response?.message || 'Login failed');
           }

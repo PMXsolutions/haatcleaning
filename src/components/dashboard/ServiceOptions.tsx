@@ -5,6 +5,7 @@ import { ServiceOption, ServiceType } from '@/api/types';
 import { Modal } from '@/components/shared/Modal';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { Button } from '@/components/shared/button';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -190,38 +191,39 @@ const ServiceOptions: React.FC = () => {
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left">
+            <Table className="w-full">
+              <TableHeader>
+                <TableRow>
+                  <TableCell>
                     <button onClick={() => handleSort('optionName')} className="flex items-center gap-2 text-sm font-medium text-gray-900">
                       Option Name
                       <SortIcon field="optionName" />
                     </button>
-                  </th>
-                  <th className="px-6 py-3 text-left">Service Type</th>
-                  <th className="px-6 py-3 text-left">
+                  </TableCell>
+                  <TableCell className='hidden sm:block'>Service Type</TableCell>
+                  <TableCell>
                     <button onClick={() => handleSort('pricePerUnit')} className="flex items-center gap-2 text-sm font-medium text-gray-900">
                       Price Per Unit
                       <SortIcon field="pricePerUnit" />
                     </button>
-                  </th>
-                  <th className="px-6 py-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
+                  </TableCell>
+                  <TableCell className="text-sm font-medium text-gray-900 text-center">Actions</TableCell>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
                 {loading ? (
-                  <tr><td colSpan={4} className="px-6 py-8 text-center text-gray-500">Loading...</td></tr>
+                  <TableRow><TableCell colSpan={4} className="px-6 py-8 text-center text-gray-500">Loading...</TableCell></TableRow>
                 ) : paginatedOptions.length === 0 ? (
-                  <tr><td colSpan={4} className="px-6 py-8 text-center text-gray-500">No service options found.</td></tr>
+                  <TableRow><TableCell colSpan={4} className="px-6 py-8 text-center text-gray-500">No service options found.</TableCell></TableRow>
                 ) : (
                   paginatedOptions.map((option) => (
-                    <tr key={option.serviceOptionId} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{option.optionName}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{getServiceTypeName(option.serviceTypeId)}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">${option.pricePerUnit}</td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                    <TableRow key={option.serviceOptionId} className="hover:bg-gray-50">
+                      <TableCell className="p-2 text-sm font-medium text-gray-900">{option.optionName}</TableCell>
+                      <TableCell className="hidden sm:block p-2 text-sm text-gray-600">{getServiceTypeName(option.serviceTypeId)}</TableCell>
+                      <TableCell className="p-2 text-sm text-gray-600">${option.pricePerUnit}</TableCell>
+                      <TableCell className="p-2 text-right">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
                           <button onClick={() => { setSelectedOption(option); reset(option); setIsEditModalOpen(true); }} className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-700 bg-green-100 rounded-md hover:bg-green-200">
                             <FiEdit2 className="w-3 h-3 mr-1" /> Edit
                           </button>
@@ -229,12 +231,12 @@ const ServiceOptions: React.FC = () => {
                             <FiTrash2 className="w-3 h-3 mr-1" /> Delete
                           </button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
 
           {/* Pagination */}

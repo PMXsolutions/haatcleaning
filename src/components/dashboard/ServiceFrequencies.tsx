@@ -5,6 +5,7 @@ import { ServiceFrequency } from '@/api/types';
 import { Modal } from '@/components/shared/Modal';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { Button } from '@/components/shared/button';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -168,7 +169,7 @@ const ServiceFrequencies: React.FC = () => {
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            {/* <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left">
@@ -210,7 +211,51 @@ const ServiceFrequencies: React.FC = () => {
                   ))
                 )}
               </tbody>
-            </table>
+            </table> */}
+            <Table className="w-full">
+              <TableHeader>
+                <TableRow>
+                  <TableCell>
+                    <button onClick={() => handleSort('frequency')} className="flex items-center gap-1 text-sm font-medium text-gray-900 break-words">
+                      Frequency Name
+                      <SortIcon field="frequency" />
+                    </button>
+                  </TableCell>
+                  <TableCell>
+                    <button onClick={() => handleSort('discountPercentage')} className="flex items-center gap-1 text-sm font-medium text-gray-900">
+                      Discount (%)
+                      <SortIcon field="discountPercentage" />
+                    </button>
+                  </TableCell>
+                  <TableCell className="text-center text-sm font-medium text-gray-900">Actions</TableCell>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {loading ? (
+                  <TableRow><TableCell colSpan={3} className="px-6 py-8 text-center text-gray-500">Loading...</TableCell></TableRow>
+                ) : paginatedFrequencies.length === 0 ? (
+                  <TableRow><TableCell colSpan={3} className="px-6 py-8 text-center text-gray-500">No service frequencies found.</TableCell></TableRow>
+                ) : (
+                  paginatedFrequencies.map((frequency) => (
+                    <TableRow key={frequency.serviceFrequencyId} className="hover:bg-gray-50">
+                      <TableCell className="p-2 text-sm font-medium text-gray-900">{frequency.frequency}</TableCell>
+                      <TableCell className="p-2 text-sm text-gray-600">{frequency.discountPercentage}%</TableCell>
+                      <TableCell className="p-2">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+                          <button onClick={() => { setSelectedFrequency(frequency); reset(frequency); setIsEditModalOpen(true); }} className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-700 bg-green-100 rounded-md hover:bg-green-200">
+                            <FiEdit2 className="w-3 h-3 mr-1" /> Edit
+                          </button>
+                          <button onClick={() => { setSelectedFrequency(frequency); setIsDeleteDialogOpen(true); }} className="inline-flex items-center px-3 py-1 text-sm font-medium text-red-700 bg-red-100 rounded-md hover:bg-red-200">
+                            <FiTrash2 className="w-3 h-3 mr-1" /> Delete
+                          </button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </div>
 
           {/* Pagination */}

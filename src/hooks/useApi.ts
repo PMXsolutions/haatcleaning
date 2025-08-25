@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { apiService } from '@/api/services'
-import type { ServiceArea, ServiceType, ServiceFrequency, ServiceOption } from '@/api/types'
+import type { ServiceArea, ServiceType, ServiceFrequency, ServiceOption, BookingRecord, Cleaner } from '@/api/types'
 import { fallbackServiceTypes, fallbackServiceFrequencies, fallbackServiceOptions } from '@/lib/fallbackData'
 
 // Hook for postal code validation
@@ -172,4 +172,115 @@ export const useServiceOptions = (serviceTypeId?: string) => {
     usingFallback,
     refetch: fetchServiceOptions 
   }
+}
+
+// Hook for all service options (no filtering)
+export const useAllServiceOptions = () => {
+  const [allServiceOptions, setAllServiceOptions] = useState<ServiceOption[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [usingFallback, setUsingFallback] = useState(false)
+
+  const fetchAllServiceOptions = useCallback(async () => {
+    try {
+      setLoading(true)
+      const options = await apiService.getAllServiceOptions()
+      setAllServiceOptions(options)
+      setUsingFallback(false)
+      setError(null)
+    } catch (err) {
+      console.error('Failed to fetch all service options:', err)
+      setError('Failed to load service options')
+      setUsingFallback(true)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchAllServiceOptions()
+  }, [fetchAllServiceOptions])
+
+  return { allServiceOptions, loading, error, usingFallback, refetch: fetchAllServiceOptions }
+}
+
+// Hook for bookings
+export const useBookings = () => {
+  const [bookings, setBookings] = useState<BookingRecord[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchBookings = useCallback(async () => {
+    try {
+      setLoading(true)
+      const bookingsData = await apiService.getAllBookings()
+      setBookings(bookingsData)
+      setError(null)
+    } catch (err) {
+      console.error('Failed to fetch bookings:', err)
+      setError('Failed to load bookings')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchBookings()
+  }, [fetchBookings])
+
+  return { bookings, loading, error, refetch: fetchBookings }
+}
+
+// Hook for cleaners
+export const useCleaners = () => {
+  const [cleaners, setCleaners] = useState<Cleaner[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchCleaners = useCallback(async () => {
+    try {
+      setLoading(true)
+      const cleanersData = await apiService.getAllCleaners()
+      setCleaners(cleanersData)
+      setError(null)
+    } catch (err) {
+      console.error('Failed to fetch cleaners:', err)
+      setError('Failed to load cleaners')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchCleaners()
+  }, [fetchCleaners])
+
+  return { cleaners, loading, error, refetch: fetchCleaners }
+}
+
+// Hook for assigned bookings (for cleaners)
+export const useAssignedBookings = () => {
+  const [bookings, setBookings] = useState<BookingRecord[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchAssignedBookings = useCallback(async () => {
+    try {
+      setLoading(true)
+      const bookingsData = await apiService.getAllAssignedBookings()
+      setBookings(bookingsData)
+      setError(null)
+    } catch (err) {
+      console.error('Failed to fetch assigned bookings:', err)
+      setError('Failed to load assigned bookings')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchAssignedBookings()
+  }, [fetchAssignedBookings])
+
+  return { bookings, loading, error, refetch: fetchAssignedBookings }
 }
