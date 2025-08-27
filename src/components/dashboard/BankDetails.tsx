@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FiSearch, FiPlus, FiEdit2, FiTrash2, FiChevronUp, FiChevronDown, FiCreditCard } from 'react-icons/fi';
 import { apiService } from '@/api/services';
-import type { BankDetails, CreateBankDetailsRequest } from '@/api/types';
+import type { BankDetails } from '@/api/types';
 import { Modal } from '@/components/shared/Modal';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { Button } from '@/components/shared/button';
