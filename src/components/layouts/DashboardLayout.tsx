@@ -18,6 +18,7 @@ import {
   FiMenu,
   FiX
 } from 'react-icons/fi';
+import { BsBank2 } from "react-icons/bs";
 
 const DashboardLayout: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -37,6 +38,7 @@ const DashboardLayout: React.FC = () => {
     { icon: FiCalendar, label: 'Bookings', path: '/dashboard/bookings' },
     { icon: FiUsers, label: 'Cleaners', path: '/dashboard/cleaners' },
     { icon: FiDollarSign, label: 'Payments', path: '/dashboard/paymentMgt' },
+    { icon: BsBank2, label: 'Bank Details', path: '/dashboard/bankDetails' },
   ];
 
   const bottomSidebarItems = [

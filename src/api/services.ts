@@ -16,6 +16,8 @@ import type {
   ServiceType,
   ServiceFrequency,
   ServiceOption,
+  BankDetails,
+  CreateBankDetailsRequest,
   ApiResponse
 } from '@/api/types';
 
@@ -345,9 +347,14 @@ class ApiService {
   }
 
   async getBookingDetails(id: string): Promise<BookingRecord> {
+  try {
     const response = await axiosInstance.get<BookingRecord>(`/Bookings/details/${id}`);
     return response.data;
+  } catch (error) {
+    console.error('Error fetching booking details:', error);
+    throw error;
   }
+}
 
   async createBooking(data: CreateBookingRequest): Promise<unknown> {
     try {
@@ -381,6 +388,16 @@ class ApiService {
     }
   }
 
+  async getCleanerAssignedBookings(userId: string): Promise<BookingRecord[]> {
+    try {
+      const response = await axiosInstance.get<BookingRecord[]>(`/Bookings/get_cleaner_assigned_booking?userId=${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching cleaner-specific assigned bookings:', error);
+      throw error;
+    }
+  }
+
   async markBookingAsPaid(bookingId: string, proofOfPayment: File): Promise<ApiResponse<null>> {
     const formData = new FormData();
     formData.append('proofOfPayment', proofOfPayment);
@@ -397,6 +414,21 @@ class ApiService {
     return response.data;
   }
 
+  // async markBookingAsPaid(bookingId: string, proofOfPayment?: File | null): Promise<ApiResponse<null>> {
+  //   const url = `/Bookings/mark_as_paid?bookingId=${encodeURIComponent(bookingId)}`
+  //   if (proofOfPayment) {
+  //     const fd = new FormData()
+  //     fd.append('file', proofOfPayment)
+  //     const response = await axiosInstance.post<ApiResponse<null>>(url, fd, {
+  //       headers: { 'Content-Type': 'multipart/form-data' }
+  //     })
+  //     return response.data
+  //   } else {
+  //     const response = await axiosInstance.post<ApiResponse<null>>(url)
+  //     return response.data
+  //   }
+  // }
+
   // Cleaners API
   async getAllCleaners(): Promise<Cleaner[]> {
     try {
@@ -410,15 +442,57 @@ class ApiService {
     }
   }
 
-  // async addCleaner(data: AddUserRequest, userId: string): Promise<ApiResponse<null>> {
-  //   try {
-  //     const response = await axiosInstance.post<ApiResponse<null>>(`/Account/add_user?userId=${userId}`, data);
-  //     return response.data;
-  //   } catch (error: any) {
-  //     console.error('Error adding cleaner:', error);
-  //     throw error;
-  //   }
-  // }
+  // Bank Details API
+  async getAllBankDetails(): Promise<BankDetails[]> {
+    try {
+      const response = await axiosInstance.get<BankDetails[]>('/BankDetails/get_all');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching bank details:', error);
+      throw error;
+    }
+  }
+
+  async getBankDetailsById(id: string): Promise<BankDetails> {
+    try {
+      const response = await axiosInstance.get<BankDetails>(`/BankDetails/details/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching bank details:', error);
+      throw error;
+    }
+  }
+
+  async addBankDetails(data: CreateBankDetailsRequest): Promise<ServiceAreaApiResponse> {
+    try {
+      const response = await axiosInstance.post<ServiceAreaApiResponse>('/BankDetails/add_bank', data);
+      return response.data;
+    } catch (error) {
+      console.error('Error adding bank details:', error);
+      throw error;
+    }
+  }
+
+  async updateBankDetails(id: string, data: BankDetails): Promise<ServiceAreaApiResponse> {
+    try {
+      const response = await axiosInstance.post<ServiceAreaApiResponse>(`/BankDetails/edit/${id}`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating bank details:', error);
+      throw error;
+    }
+  }
+
+  async deleteBankDetails(id: string): Promise<ServiceAreaApiResponse> {
+    try {
+      const response = await axiosInstance.post<ServiceAreaApiResponse>(`/BankDetails/delete/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting bank details:', error);
+      throw error;
+    }
+  }
+
 }
 
 // Export singleton instance

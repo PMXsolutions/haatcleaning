@@ -10,6 +10,7 @@ import type { BookingRecord, ServiceOption, ServiceFrequency, Cleaner } from '@/
 import { Modal } from '@/components/shared/Modal';
 import { Button } from '@/components/shared/button';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'; 
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -55,6 +56,25 @@ function renderDetails(details: unknown) {
 
   return <p className="text-sm text-gray-600">{String(details)}</p>;
 }
+
+const getStatusBadge = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case "pending":
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+      case "confirmed":
+        return <Badge variant="default" className="bg-blue-100 text-blue-800">Comfirmed</Badge>;
+      case "complete":
+        return <Badge variant="default" className="bg-green-100 text-green-800">Complete</Badge>;
+      case "in-progress":
+        return <Badge variant="default" className="bg-purple-100 text-purple-800">In Progress</Badge>;
+      case "completed":
+        return <Badge variant="default" className="bg-emerald-100 text-emerald-800">Completed</Badge>;
+      case "cancelled":
+        return <Badge variant="destructive" className="bg-red-100 text-red-800">Cancelled</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
 
 const Bookings: React.FC = () => {
   const [bookings, setBookings] = useState<BookingRecord[]>([]);
@@ -229,14 +249,14 @@ const Bookings: React.FC = () => {
 
         {/* Table */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 font-body">
-          <div className="">
-            <Table className="w-full overflow-hidden">
+          <div className="overflow-x-auto">
+            <Table className="w-full">
               <TableHeader>
                 <TableRow>
                   <TableCell>
                     <button
                       onClick={() => handleSort('bookingId')}
-                      className="flex items-center gap-2 text-sm text-gray-900"
+                      className="flex items-center gap-2 text-sm font-medium text-gray-900"
                     >
                       Booking ID
                       <SortIcon field="bookingId" />
@@ -245,7 +265,7 @@ const Bookings: React.FC = () => {
                   <TableCell className="hidden md:table-cell">
                     <button
                       onClick={() => handleSort('customerName')}
-                      className="flex items-center gap-2 text-sm text-gray-900"
+                      className="flex items-center gap-2 text-sm font-medium text-gray-900"
                     >
                       Customer
                       <SortIcon field="customerName" />
@@ -260,7 +280,7 @@ const Bookings: React.FC = () => {
                   <TableCell className="hidden sm:table-cell">
                     <button
                       onClick={() => handleSort('serviceDate')}
-                      className="flex items-center gap-2 text-sm text-gray-900"
+                      className="flex items-center gap-2 text-sm font-medium text-gray-900"
                     >
                       Date/Time
                       <SortIcon field="serviceDate" />
@@ -269,72 +289,71 @@ const Bookings: React.FC = () => {
                   <TableCell>
                     <button
                       onClick={() => handleSort('status')}
-                      className="flex items-center gap-2 text-sm text-gray-900"
+                      className="flex items-center gap-2 text-sm font-medium text-gray-900"
                     >
                       Status
                       <SortIcon field="status" />
                     </button>
                   </TableCell>
-                  <TableCell className="text-right">Actions</TableCell>
+                  <TableCell className="text-center text-sm font-medium text-gray-900">Actions</TableCell>
                 </TableRow>
               </TableHeader>
 
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={11} className="px-6 py-8 text-center text-gray-500">Loading...</TableCell>
+                    <TableCell colSpan={6} className="px-6 py-8 text-center text-gray-500">Loading...</TableCell>
                   </TableRow>
                 ) : paginatedBookings.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={11} className="px-6 py-8 text-center text-gray-500">No bookings found.</TableCell>
+                    <TableCell colSpan={6} className="px-6 py-8 text-center text-gray-500">No bookings found.</TableCell>
                   </TableRow>
                 ) : (
                   paginatedBookings.map((b) => (
                     <TableRow key={b.bookingId} className="hover:bg-gray-50">
-                      <TableCell className="p-2 text-sm font-medium text-gray-900">{b.bookingId}</TableCell>
-                      <TableCell className="hidden md:table-cell p-2">
+                      <TableCell className="p-3 text-sm font-medium text-gray-900">{b.bookingId}</TableCell>
+                      <TableCell className="hidden md:table-cell p-3">
                         <div className="text-sm font-medium text-gray-900">{b.customerName}</div>
                         <div className="text-sm text-gray-500">{b.customerEmail}</div>
                       </TableCell>
-                      <TableCell className="hidden p-2 text-sm text-gray-700">
+                      <TableCell className="hidden p-3 text-sm text-gray-700">
                         <div>{b.customerPhone || "—"}</div>
                         <div className="text-gray-500">{b.customerEmail}</div>
                       </TableCell>
-                      <TableCell className="hidden p-2 text-sm text-gray-700">
+                      <TableCell className="hidden p-3 text-sm text-gray-700">
                         <div>{b.customerAddress || "-"}</div>
                         <div className="text-gray-500">{b.customerCity || "-"}</div>
                       </TableCell>
-                      <TableCell className="hidden md:table-cell p-2 text-sm text-gray-700">
+                      <TableCell className="hidden md:table-cell p-3 text-sm text-gray-700">
                         {b.serviceArea?.areaName || "-"}
                       </TableCell>
-                      {/* ServiceType uses `name`, not `typeName` */}
-                      <TableCell className="hidden p-2 text-sm text-gray-700">
+                      <TableCell className="hidden p-3 text-sm text-gray-700">
                         {b.serviceType?.name || "-"}
                       </TableCell>
-                      <TableCell className="hidden p-2 text-sm text-gray-700">{frequencyLabel(b)}</TableCell>
-                      <TableCell className="hidden p-2 text-sm text-gray-700">{optionsSummary(b) || "-"}</TableCell>
-                      <TableCell className="hidden sm:table-cell p-2 text-sm text-gray-900">
+                      <TableCell className="hidden p-3 text-sm text-gray-700">{frequencyLabel(b)}</TableCell>
+                      <TableCell className="hidden p-3 text-sm text-gray-700">{optionsSummary(b) || "-"}</TableCell>
+                      <TableCell className="hidden sm:table-cell p-3 text-sm text-gray-900">
                         {new Date(b.serviceDate).toLocaleDateString()}{" "}
                         {new Date(b.serviceDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                       </TableCell>
-                      <TableCell className="p-2">
-                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
-                          {b.status.charAt(0).toUpperCase() + b.status.slice(1).replace("-", " ")}
-                        </span>
+                      <TableCell className="p-3">
+                        {getStatusBadge(b.status)}
                       </TableCell>
-                      <TableCell className="p-2 text-right flex flex-col gap-2">
-                        <button
-                          onClick={() => { setSelectedBooking(b); setIsDetailModalOpen(true); }}
-                          className="inline-flex items-center justify-center px-3 py-1 text-sm font-medium text-blue-700 bg-blue-100 rounded-md hover:bg-blue-200"
-                        >
-                          <FiEye className="w-3 h-3 mr-1" /> View
-                        </button>
-                        <button
-                          onClick={() => { setSelectedForAssign(b); setIsAssignModalOpen(true); setSelectedCleanerId(""); }}
-                          className="inline-flex items-center justify-center px-3 py-1 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
-                        >
-                          {b.assignedCleanerId ? "Reassign" : "Assign"}
-                        </button>
+                      <TableCell className="p-3 text-center">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                            <button
+                              onClick={() => { setSelectedBooking(b); setIsDetailModalOpen(true); }}
+                              className="inline-flex items-center justify-center px-3 py-1 text-sm font-medium text-blue-700 bg-blue-100 rounded-md hover:bg-blue-200"
+                            >
+                              <FiEye className="w-3 h-3 mr-1" /> View
+                            </button>
+                            <button
+                              onClick={() => { setSelectedForAssign(b); setIsAssignModalOpen(true); setSelectedCleanerId(""); }}
+                              className="inline-flex items-center justify-center px-3 py-1 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
+                            >
+                              {b.assignedCleanerId ? "Reassign" : "Assign"}
+                            </button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
@@ -369,17 +388,18 @@ const Bookings: React.FC = () => {
           setSelectedBooking(null);
         }}
         title="Booking Details"
+        size="lg"
       >
         {selectedBooking && (
           <div className="space-y-6 font-body">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">Customer Information</h4>
                 <div className="space-y-2 text-sm text-gray-600">
                   <p><span className="font-medium">Name:</span> {selectedBooking.customerName}</p>
                   <p><span className="font-medium">Email:</span> {selectedBooking.customerEmail}</p>
                   <p><span className="font-medium">Phone:</span> {selectedBooking.customerPhone || '—'}</p>
-                  <p><span className="font-medium">Address:</span> {selectedBooking.customerAddress || '—'}</p>
+                  <p><span className="font-medium">Address:</span> {selectedBooking.customerAddress || '—'}, {selectedBooking.customerCity || ''}</p>
                 </div>
               </div>
               
@@ -389,8 +409,8 @@ const Bookings: React.FC = () => {
                   <p><span className="font-medium">Service Type:</span> {selectedBooking.serviceType?.name || '-'}</p>
                   <p><span className="font-medium">Area:</span> {selectedBooking.serviceArea?.areaName || '-'}</p>
                   <p><span className="font-medium">Frequency:</span> {frequencyLabel(selectedBooking)}</p>
-                  <p><span className="font-medium">Date:</span> {new Date(selectedBooking.serviceDate).toLocaleDateString()}</p>
-                  <p><span className="font-medium">Total Price:</span> ${selectedBooking.totalPrice}</p>
+                  <p><span className="font-medium">Date:</span> {new Date(selectedBooking.serviceDate).toLocaleString()}</p>
+                  <p><span className="font-medium">Total Price:</span> ${selectedBooking.totalPrice.toFixed(2)}</p>
                 </div>
               </div>
             </div>
@@ -402,7 +422,7 @@ const Bookings: React.FC = () => {
               if (!rendered) return null;
               return (
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Additional Details</h4>
+                  <h4 className="font-medium text-gray-900 mb-2">Additional Details & Options</h4>
                   {rendered}
                 </div>
               );
@@ -420,7 +440,7 @@ const Bookings: React.FC = () => {
         {selectedForAssign && (
           <div className="space-y-4 font-body">
             <div className="text-sm text-gray-700">
-              Booking <span className="font-medium">{selectedForAssign.bookingId}</span>
+              Assign a cleaner to booking <span className="font-medium">{selectedForAssign.bookingId}</span> for <span className="font-medium">{selectedForAssign.customerName}</span>.
             </div>
             <div>
               <Select value={selectedCleanerId} onValueChange={setSelectedCleanerId}>
@@ -430,19 +450,20 @@ const Bookings: React.FC = () => {
                 <SelectContent className="bg-white">
                   {cleaners.map((c) => (
                     <SelectItem key={c.userId || c.id} value={c.userId || c.id}>
-                      {c.firstName} {c.lastName} — {c.email}
+                      {c.firstName} {c.lastName} — {c.status}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex gap-3 justify-end">
+            <div className="flex gap-3 pt-2 border-t justify-end">
               <Button
                 label="Cancel"
+                variant='outline'
                 onClick={() => { setIsAssignModalOpen(false); setSelectedForAssign(null); setSelectedCleanerId(""); }}
               />
               <Button
-                label="Assign"
+                label="Confirm Assignment"
                 variant="primary"
                 disabled={!selectedCleanerId}
                 onClick={async () => {

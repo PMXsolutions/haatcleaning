@@ -27,7 +27,6 @@ const validationSchema = yup.object().shape({
 // FIX: Infer the form data type from the yup schema
 type CleanerFormData = yup.InferType<typeof validationSchema>;
 
-// Define a type for the assigned booking data from the API
 interface AssignedBooking {
   assignedCleanerId?: string;
 }
@@ -267,7 +266,7 @@ const Cleaners: React.FC = () => {
                     </button>
                   </TableCell>
                   <TableCell className='hidden sm:table-cell text-sm font-medium text-gray-900'>Phone</TableCell>
-                  <TableCell className="hidden sm:table-cell text-sm font-medium text-gray-900 text-center">Assigned</TableCell>
+                  {/* <TableCell className="hidden sm:table-cell text-sm font-medium text-gray-900 text-center">Assigned</TableCell> */}
                   <TableCell className="text-sm font-medium text-gray-900 text-center">Actions</TableCell>
                 </TableRow>
               </TableHeader>
@@ -289,9 +288,9 @@ const Cleaners: React.FC = () => {
                       </TableCell>
                       <TableCell className="p-2 text-sm text-gray-600">{cleaner.email}</TableCell>
                       <TableCell className="p-2 hidden sm:table-cell text-sm text-gray-600">{cleaner.phoneNumber}</TableCell>
-                      <TableCell className="p-2 hidden sm:table-cell text-sm text-gray-600 text-center">
+                      {/* <TableCell className="p-2 hidden sm:table-cell text-sm text-gray-600 text-center">
                         {assignedMap[cleaner.userId || cleaner.id] || 0}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell className="p-2 text-right">
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
                           <button

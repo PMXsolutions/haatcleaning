@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+// import { useAuth } from '@/hooks/useAuth';
 import FormLayout from "@/components/shared/form-layout";
 import { Button } from '@/components/shared/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
@@ -12,7 +12,7 @@ const OtpVerification: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
+  // const { login } = useAuth();
 
   const email = location.state?.email;
 
@@ -42,6 +42,7 @@ const OtpVerification: React.FC = () => {
       } else {
         navigate('/dashboard');
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('OTP verification error:', error);
       toast.error(error?.response?.data?.message || 'Invalid OTP. Please try again.');
@@ -95,13 +96,13 @@ const OtpVerification: React.FC = () => {
             </InputOTP>
           </div>
 
-          <Button
+          <button
             type="submit"
-            label={isLoading ? "Verifying..." : "Verify OTP"}
-            variant="primary"
             disabled={isLoading || otp.length !== 6}
-            className="w-full"
-          />
+            className="w-full px-6 py-2 font-medium transition-all duration-300 border border-color cursor-pointer rounded-lg flex items-center justify-center gap-2 bg-gold hover:bg-white text-white hover:text-gold disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? "Verifying..." : "Verify OTP"}
+          </button> 
         </form>
 
         <div className="mt-6 text-center">

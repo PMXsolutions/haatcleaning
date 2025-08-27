@@ -61,7 +61,7 @@ export interface BookingRecord {
   serviceFrequencyId: string
   serviceDate: string
   totalPrice: number
-  status: "pending" | "assigned" | "in-progress" | "completed" | "cancelled"
+  status: "pending" | "assigned" | "paid"
   customerName: string
   customerEmail: string
   customerPhone?: string
@@ -71,6 +71,7 @@ export interface BookingRecord {
   assignedCleanerId?: string
   createdAt: string
   updatedAt?: string
+  receiptUrl?: string
   serviceArea?: ServiceArea
   serviceType?: ServiceType
   frequency?: ServiceFrequency
@@ -142,4 +143,69 @@ export interface ApiResponse<T> {
   data: T
   success?: boolean
   message?: string
+}
+
+// Bank
+export interface BankDetails {
+  bankDetailsId: string
+  bankName: string
+  accountNumber: string
+  accountName: string
+  bsb: string
+  sortCode: string
+}
+
+export interface CreateBankDetailsRequest {
+  bankName: string
+  accountNumber: string
+  accountName: string
+  bsb: string
+  sortCode: string
+}
+
+export interface AssignmentUser {
+  userId: string
+  firstName: string
+  lastName: string
+  fullName: string
+  email: string
+  phoneNumber: string
+  role: string
+}
+
+export interface AssignmentBooking {
+  bookingId: string
+  serviceAreaId: string
+  serviceTypeId: string
+  serviceFrequencyId: string
+  serviceDate: string
+  serviceTime: string
+  status: string
+  isPaid: boolean
+  proofOfPayment: string | null
+  totalPrice: number
+  details: string | null
+  customerName: string
+  customerEmail: string
+  customerPhone: string
+  customerAddress: string
+  customerCity: string
+  dateCreated: string
+  dateModified: string
+  serviceArea?: { areaName?: string } | null
+  serviceType?: { name?: string } | null
+  serviceFrequency?: { frequency?: string } | null
+  serviceDetails?: Array<{
+    serviceOptionId: string
+    quantity: number
+  }> | null
+}
+
+export interface CleanerAssignment {
+  bookingAssignmentId: string
+  bookingId: string
+  dateCreated: string
+  dateModified: string
+  user: AssignmentUser
+  booking: AssignmentBooking
 }

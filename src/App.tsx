@@ -16,6 +16,7 @@ import ServiceFrequencies from '@/components/dashboard/ServiceFrequencies';
 import ServiceTypes from '@/components/dashboard/ServiceTypes';
 import ServiceOptions from '@/components/dashboard/ServiceOptions';
 import PaymentManagement from '@/components/dashboard/paymentMgt';
+import BankDetails from '@/components/dashboard/BankDetails';
 import Cleaners from '@/components/dashboard/Cleaners';
 import Bookings from '@/components/dashboard/Bookings';
 import ContactUsPage from '@/pages/contactUs';
@@ -62,6 +63,7 @@ function AppContent() {
             <Route path="bookings" element={<Bookings />} />
             <Route path="cleaners" element={<Cleaners />} />
             <Route path="paymentMgt" element={<PaymentManagement />} />
+            <Route path="bankDetails" element={<BankDetails />} />
           </Route>
 
           <Route

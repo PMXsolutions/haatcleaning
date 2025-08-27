@@ -4,14 +4,11 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import {
   FiSearch,
-  FiFilter,
   FiEye,
-  // FiCheck,
-  FiDollarSign,
+  // FiDollarSign,
   FiChevronUp,
   FiChevronDown,
   FiDownload,
-  // FiClock,
 } from "react-icons/fi"
 import { apiService } from "@/api/services"
 import type { BookingRecord } from "@/api/types"
@@ -24,9 +21,8 @@ import toast from "react-hot-toast"
 const ITEMS_PER_PAGE = 10
 
 interface PaymentRecord extends BookingRecord {
-  paymentStatus: "pending" | "paid" | "approved" | "rejected"
-  paymentMethod: "card" | "cash" | "transfer"
-  receiptUrl?: string
+  paymentStatus: "pending" | "paid" | "completed"
+  paymentMethod: "transfer"
   processedAt?: string
 }
 
@@ -41,27 +37,37 @@ const PaymentManagement: React.FC = () => {
 
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState<PaymentRecord | null>(null)
-  // const [isProcessing, setIsProcessing] = useState(false)
 
   const fetchPayments = async () => {
     try {
       setLoading(true)
-      // Get all bookings and filter for those with payment status
       const bookings = await apiService.getAllBookings()
 
-      // Transform bookings to payment records
-      const paymentRecords: PaymentRecord[] = bookings
-        .filter((booking) => booking.status === "completed" || booking.status === "paid")
-        .map((booking) => ({
+      const paymentRecords: PaymentRecord[] = bookings.map((booking) => {
+        // Map booking status to payment status
+        let paymentStatus: "pending" | "paid" | "completed"
+        
+        const bookingStatus = booking.status?.toLowerCase()
+        
+        if (bookingStatus === "completed") {
+          paymentStatus = "completed"
+        } else if (bookingStatus === "paid" || Boolean(booking.receiptUrl)) {
+          paymentStatus = "paid"
+        } else {
+          paymentStatus = "pending"
+        }
+
+        return {
           ...booking,
-          paymentStatus: booking.status === "paid" ? "paid" : "pending",
-          paymentMethod: "transfer" as const, // Default to transfer based on user requirements
-          processedAt: booking.status === "paid" ? booking.updatedAt : undefined,
-        }))
+          paymentStatus,
+          paymentMethod: "transfer",
+          processedAt: (paymentStatus === "paid" || paymentStatus === "completed") ? booking.updatedAt : undefined,
+        }
+      })
 
       setPayments(paymentRecords)
     } catch (error) {
-      console.error("Error fetching payments:", error)
+      console.error("Failed to fetch payments:", error)
       toast.error("Failed to fetch payment records")
     } finally {
       setLoading(false)
@@ -73,44 +79,23 @@ const PaymentManagement: React.FC = () => {
   }, [])
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case "pending":
         return "bg-yellow-100 text-yellow-800"
+      case "confirmed":
+        return "bg-blue-100 text-blue-800"
       case "paid":
         return "bg-green-100 text-green-800"
-      case "approved":
-        return "bg-blue-100 text-blue-800"
-      case "rejected":
-        return "bg-red-100 text-red-800"
+      case "in-progress":
+        return "bg-purple-100 text-purple-800"
+      case "complete":
+        return "bg-emerald-100 text-emerald-800"
+      // case "cancelled":
+      //   return "bg-red-100 text-red-800"
       default:
         return "bg-gray-100 text-gray-800"
     }
   }
-
-  // const handleApprovePayment = async (paymentId: string) => {
-  //   setIsProcessing(true)
-  //   try {
-  //     await apiService.markBookingAsPaid(paymentId)
-  //     toast.success("Payment approved successfully!")
-  //     await fetchPayments()
-  //   } catch (error) {
-  //     console.error("Error approving payment:", error)
-  //     toast.error("Failed to approve payment")
-  //   } finally {
-  //     setIsProcessing(false)
-  //   }
-  // }
-
-  // const handleApprovePayment = async (_paymentId: string) => {
-  //   setIsProcessing(true)
-  //   try {
-  //     // No admin-approval endpoint provided. Keep UI and notify.
-  //     // toast.info("Admin approval will be wired once the API is provided.")
-  //     // toast.info("Admin incoming")
-  //   } finally {
-  //     setIsProcessing(false)
-  //   }
-  // }
 
   const filteredPayments = payments
     .filter((payment) => {
@@ -163,18 +148,6 @@ const PaymentManagement: React.FC = () => {
     )
   }
 
-  // const getPaymentStats = () => {
-  //   const total = payments.length
-  //   const pending = payments.filter((p) => p.paymentStatus === "pending").length
-  //   const paid = payments.filter((p) => p.paymentStatus === "paid").length
-  //   const totalAmount = payments.reduce((sum, p) => sum + p.totalPrice, 0)
-  //   const paidAmount = payments.filter((p) => p.paymentStatus === "paid").reduce((sum, p) => sum + p.totalPrice, 0)
-
-  //   return { total, pending, paid, totalAmount, paidAmount }
-  // }
-
-  // const stats = getPaymentStats()
-
   return (
     <div className="p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
@@ -182,60 +155,9 @@ const PaymentManagement: React.FC = () => {
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Payment Management</h1>
           <p className="text-gray-600 mt-1">
-            Track and approve customer payments with full visibility by date, method, and status.
+            Track customer payments with full visibility by date, method, and status.
           </p>
         </div>
-
-        {/* Stats Cards */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <FiDollarSign className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Payments</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <FiClock className="w-6 h-6 text-yellow-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <FiCheck className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Approved</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.paid}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center">
-              <div className="p-2 bg-emerald-100 rounded-lg">
-                <FiDollarSign className="w-6 h-6 text-emerald-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">${stats.totalAmount.toFixed(2)}</p>
-              </div>
-            </div>
-          </div>
-        </div> */}
 
         {/* Controls */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
@@ -262,15 +184,9 @@ const PaymentManagement: React.FC = () => {
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="paid">Paid</SelectItem>
-                  <SelectItem value="approved">Approved</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
+                  <SelectItem value="complete">Complete</SelectItem>
                 </SelectContent>
               </Select>
-
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                <FiFilter className="w-4 h-4" />
-                <span className="hidden sm:inline">Filter</span>
-              </button>
             </div>
           </div>
         </div>
@@ -286,7 +202,7 @@ const PaymentManagement: React.FC = () => {
                       onClick={() => handleSort("bookingId")}
                       className="flex items-center gap-2 text-sm font-medium text-gray-900"
                     >
-                      Payment ID
+                      Booking ID
                       <SortIcon field="bookingId" />
                     </button>
                   </TableCell>
@@ -300,15 +216,14 @@ const PaymentManagement: React.FC = () => {
                     </button>
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-sm font-medium text-gray-900">
-                    Amount Paid ($)
+                    Amount ($)
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-sm font-medium text-gray-900">Method</TableCell>
                   <TableCell className="hidden sm:table-cell">
                     <button
                       onClick={() => handleSort("serviceDate")}
                       className="flex items-center gap-2 text-sm font-medium text-gray-900"
                     >
-                      Date Paid
+                      Service Date
                       <SortIcon field="serviceDate" />
                     </button>
                   </TableCell>
@@ -317,7 +232,7 @@ const PaymentManagement: React.FC = () => {
                       onClick={() => handleSort("paymentStatus")}
                       className="flex items-center gap-2 text-sm font-medium text-gray-900"
                     >
-                      Status
+                      Payment Status
                       <SortIcon field="paymentStatus" />
                     </button>
                   </TableCell>
@@ -328,13 +243,13 @@ const PaymentManagement: React.FC = () => {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                    <TableCell colSpan={6} className="px-6 py-8 text-center text-gray-500">
                       Loading payments...
                     </TableCell>
                   </TableRow>
                 ) : paginatedPayments.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                    <TableCell colSpan={6} className="px-6 py-8 text-center text-gray-500">
                       No payment records found.
                     </TableCell>
                   </TableRow>
@@ -349,26 +264,18 @@ const PaymentManagement: React.FC = () => {
                       <TableCell className="hidden md:table-cell p-4 text-sm font-medium text-gray-900">
                         ${payment.totalPrice.toFixed(2)}
                       </TableCell>
-                      <TableCell className="hidden lg:table-cell p-4 text-sm text-gray-700">
-                        <div className="flex items-center gap-1">
-                          <FiDollarSign className="w-4 h-4 text-gray-400" />
-                          {payment.paymentMethod.charAt(0).toUpperCase() + payment.paymentMethod.slice(1)}
-                        </div>
-                      </TableCell>
                       <TableCell className="hidden sm:table-cell p-4 text-sm text-gray-900">
-                        {payment.processedAt
-                          ? new Date(payment.processedAt).toLocaleDateString()
-                          : new Date(payment.serviceDate).toLocaleDateString()}
+                        {new Date(payment.serviceDate).toLocaleDateString()}
                       </TableCell>
                       <TableCell className="p-4">
                         <span
-                          className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(payment.paymentStatus)}`}
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(payment.status)}`}
                         >
-                          {payment.paymentStatus.charAt(0).toUpperCase() + payment.paymentStatus.slice(1)}
+                          {payment.status?.charAt(0).toUpperCase() + payment.status?.slice(1) || 'Unknown'}
                         </span>
                       </TableCell>
                       <TableCell className="p-4 text-right">
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col items-center gap-2">
                           <button
                             onClick={() => {
                               setSelectedPayment(payment)
@@ -378,15 +285,6 @@ const PaymentManagement: React.FC = () => {
                           >
                             <FiEye className="w-3 h-3 mr-1" /> View
                           </button>
-                          {/* {payment.paymentStatus === "pending" && (
-                            <button
-                              onClick={() => handleApprovePayment(payment.bookingId)}
-                              disabled={isProcessing}
-                              className="inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 disabled:opacity-50"
-                            >
-                              <FiCheck className="w-3 h-3 mr-1" /> Approve
-                            </button>
-                          )} */}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -432,12 +330,12 @@ const PaymentManagement: React.FC = () => {
                 <h4 className="font-medium text-gray-900 mb-3">Payment Information</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Payment ID:</span>
+                    <span className="text-gray-600">Booking ID:</span>
                     <span className="font-medium">{selectedPayment.bookingId}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Amount:</span>
-                    <span className="font-medium text-lg text-green-600">${selectedPayment.totalPrice}</span>
+                    <span className="font-medium text-lg text-green-600">${selectedPayment.totalPrice.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Method:</span>
@@ -446,19 +344,25 @@ const PaymentManagement: React.FC = () => {
                   <div className="flex justify-between">
                     <span className="text-gray-600">Status:</span>
                     <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(selectedPayment.paymentStatus)}`}
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(selectedPayment.status)}`}
                     >
-                      {selectedPayment.paymentStatus}
+                      {selectedPayment.status?.charAt(0).toUpperCase() + selectedPayment.status?.slice(1) || 'Unknown'}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Date Paid:</span>
+                    <span className="text-gray-600">Service Date:</span>
                     <span className="font-medium">
-                      {selectedPayment.processedAt
-                        ? new Date(selectedPayment.processedAt).toLocaleDateString()
-                        : new Date(selectedPayment.serviceDate).toLocaleDateString()}
+                      {new Date(selectedPayment.serviceDate).toLocaleDateString()}
                     </span>
                   </div>
+                  {selectedPayment.processedAt && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Processed:</span>
+                      <span className="font-medium">
+                        {new Date(selectedPayment.processedAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -478,8 +382,12 @@ const PaymentManagement: React.FC = () => {
                     <span className="font-medium">{selectedPayment.customerPhone || "N/A"}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Service Date:</span>
-                    <span className="font-medium">{new Date(selectedPayment.serviceDate).toLocaleDateString()}</span>
+                    <span className="text-gray-600">Address:</span>
+                    <span className="font-medium text-right max-w-xs">{selectedPayment.customerAddress || "N/A"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Service Area:</span>
+                    <span className="font-medium">{selectedPayment.serviceArea?.areaName || "N/A"}</span>
                   </div>
                 </div>
               </div>
@@ -488,9 +396,9 @@ const PaymentManagement: React.FC = () => {
             {selectedPayment.receiptUrl && (
               <div>
                 <h4 className="font-medium text-gray-900 mb-3">Payment Receipt</h4>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <FiDownload className="w-5 h-5 text-gray-600" />
-                  <span className="text-sm text-gray-700">Receipt available for download</span>
+                <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <FiDownload className="w-5 h-5 text-green-600" />
+                  <span className="text-sm text-green-800">Receipt available for download</span>
                   <Button
                     label="Download"
                     onClick={() => window.open(selectedPayment.receiptUrl, "_blank")}
@@ -499,30 +407,6 @@ const PaymentManagement: React.FC = () => {
                 </div>
               </div>
             )}
-
-            <div className="flex gap-3 justify-end pt-4 border-t">
-              {selectedPayment.paymentStatus === "pending" && (
-                <>
-                  <Button
-                    label="Reject"
-                    onClick={() => {
-                      // Handle rejection logic here
-                      // toast.info("Rejection functionality to be implemented")
-                    }}
-                    className="bg-red-600 text-white hover:bg-red-700"
-                  />
-                  <Button
-                    label="Approve"
-                    variant="primary"
-                    onClick={() => {
-                      // handleApprovePayment(selectedPayment.bookingId)
-                      setIsDetailModalOpen(false)
-                    }}
-                    // disabled={isProcessing}
-                  />
-                </>
-              )}
-            </div>
           </div>
         )}
       </Modal>
@@ -531,3 +415,14 @@ const PaymentManagement: React.FC = () => {
 }
 
 export default PaymentManagement
+
+
+// TODO: - work on download in payments page (if possible)
+// TODO - work on filter status in payments page
+// TODO:- filter cleaners (assigned and available, if possible)
+// TODO:- edit and remove cleaners
+// TODO:- filter status in bookings
+// TODO:- when status is confirmed change assign to reassign, when status is complete remove assign button
+// TODO:- recent activity in dashboardhome should show latest 5 bookings
+// TODO:- total booking, active cleaners, service areas should work.
+// TODO:- remove revenue
