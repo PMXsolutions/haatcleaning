@@ -39,6 +39,21 @@ class ApiService {
     return response.data;
   }
 
+  async editUser(cleanerId: string, userData: Partial<CreateCleanerRequest>, adminUserId: string): Promise<ApiResponse<null>> {
+    const response = await axiosInstance.post<ApiResponse<null>>(
+      `/Account/user_edit/${cleanerId}?userId=${adminUserId}`, 
+      userData
+    );
+    return response.data;
+  }
+
+  async deleteUser(cleanerId: string, adminUserId: string): Promise<ApiResponse<null>> {
+    const response = await axiosInstance.post<ApiResponse<null>>(
+      `/Account/delete_user?id=${cleanerId}&userId=${adminUserId}`
+    );
+    return response.data;
+  }
+
   // Service Areas API
   async getAllServiceAreas(): Promise<ServiceArea[]> {
     try {

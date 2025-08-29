@@ -58,23 +58,25 @@ function renderDetails(details: unknown) {
 }
 
 const getStatusBadge = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case "pending":
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending</Badge>;
-      case "confirmed":
-        return <Badge variant="default" className="bg-blue-100 text-blue-800">Comfirmed</Badge>;
-      case "complete":
-        return <Badge variant="default" className="bg-green-100 text-green-800">Complete</Badge>;
-      case "in-progress":
-        return <Badge variant="default" className="bg-purple-100 text-purple-800">In Progress</Badge>;
-      case "completed":
-        return <Badge variant="default" className="bg-emerald-100 text-emerald-800">Completed</Badge>;
-      case "cancelled":
-        return <Badge variant="destructive" className="bg-red-100 text-red-800">Cancelled</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
+  switch (status?.toLowerCase()) {
+    case "pending":
+      return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+    case "confirmed":
+    case "assigned":
+      return <Badge variant="default" className="bg-blue-100 text-blue-800">Assigned</Badge>;
+    case "complete":
+    case "completed":
+      return <Badge variant="default" className="bg-green-100 text-green-800">Completed</Badge>;
+    case "in-progress":
+      return <Badge variant="default" className="bg-purple-100 text-purple-800">In Progress</Badge>;
+    case "paid":
+      return <Badge variant="default" className="bg-emerald-100 text-emerald-800">Paid</Badge>;
+    case "cancelled":
+      return <Badge variant="destructive" className="bg-red-100 text-red-800">Cancelled</Badge>;
+    default:
+      return <Badge variant="outline">{status}</Badge>;
+  }
+};
 
 const Bookings: React.FC = () => {
   const [bookings, setBookings] = useState<BookingRecord[]>([]);
@@ -137,12 +139,35 @@ const Bookings: React.FC = () => {
       .join(", ");
   };
 
+  // Helper function to normalize status for filtering
+  const normalizeStatus = (status: string): string => {
+    const lowercased = status?.toLowerCase() || '';
+    if (lowercased === 'confirmed') return 'assigned';
+    if (lowercased === 'complete') return 'completed';
+    return lowercased;
+  };
+
+  // Helper function to check if booking can be assigned/reassigned
+  const canAssignBooking = (booking: BookingRecord): { canAssign: boolean; buttonText: string } => {
+    const status = normalizeStatus(booking.status);
+    
+    if (status === 'completed' || status === 'cancelled') {
+      return { canAssign: false, buttonText: 'Completed' };
+    }
+    
+    const hasAssignment = Boolean(booking.assignedCleanerId);
+    return {
+      canAssign: true,
+      buttonText: hasAssignment ? 'Reassign' : 'Assign'
+    };
+  };
+
   // Filter + sort
   const filteredBookings = bookings
     .filter(b => {
       const q = searchTerm.trim().toLowerCase();
 
-      // Search by NAME, ADDRESS, CITY, SERVICE AREA (requested)
+      // Search by NAME, ADDRESS, CITY, SERVICE AREA
       const matchesSearch = [
         b.customerName,
         b.customerAddress,
@@ -150,7 +175,10 @@ const Bookings: React.FC = () => {
         b.serviceArea?.areaName
       ].some(val => (val ?? '').toLowerCase().includes(q));
 
-      const matchesFilter = filterStatus === 'all' || b.status === filterStatus;
+      // Normalize both booking status and filter status for comparison
+      const bookingStatus = normalizeStatus(b.status);
+      const matchesFilter = filterStatus === 'all' || bookingStatus === normalizeStatus(filterStatus);
+      
       return matchesSearch && matchesFilter;
     })
     .sort((a, b) => {
@@ -238,9 +266,10 @@ const Bookings: React.FC = () => {
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="assigned">Assigned</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
+                  {/* <SelectItem value="paid">Paid</SelectItem> */}
+                  {/* <SelectItem value="in-progress">In Progress</SelectItem> */}
                   <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                  {/* <SelectItem value="cancelled">Cancelled</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>
@@ -309,54 +338,59 @@ const Bookings: React.FC = () => {
                     <TableCell colSpan={6} className="px-6 py-8 text-center text-gray-500">No bookings found.</TableCell>
                   </TableRow>
                 ) : (
-                  paginatedBookings.map((b) => (
-                    <TableRow key={b.bookingId} className="hover:bg-gray-50">
-                      <TableCell className="p-3 text-sm font-medium text-gray-900">{b.bookingId}</TableCell>
-                      <TableCell className="hidden md:table-cell p-3">
-                        <div className="text-sm font-medium text-gray-900">{b.customerName}</div>
-                        <div className="text-sm text-gray-500">{b.customerEmail}</div>
-                      </TableCell>
-                      <TableCell className="hidden p-3 text-sm text-gray-700">
-                        <div>{b.customerPhone || "—"}</div>
-                        <div className="text-gray-500">{b.customerEmail}</div>
-                      </TableCell>
-                      <TableCell className="hidden p-3 text-sm text-gray-700">
-                        <div>{b.customerAddress || "-"}</div>
-                        <div className="text-gray-500">{b.customerCity || "-"}</div>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell p-3 text-sm text-gray-700">
-                        {b.serviceArea?.areaName || "-"}
-                      </TableCell>
-                      <TableCell className="hidden p-3 text-sm text-gray-700">
-                        {b.serviceType?.name || "-"}
-                      </TableCell>
-                      <TableCell className="hidden p-3 text-sm text-gray-700">{frequencyLabel(b)}</TableCell>
-                      <TableCell className="hidden p-3 text-sm text-gray-700">{optionsSummary(b) || "-"}</TableCell>
-                      <TableCell className="hidden sm:table-cell p-3 text-sm text-gray-900">
-                        {new Date(b.serviceDate).toLocaleDateString()}{" "}
-                        {new Date(b.serviceDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                      </TableCell>
-                      <TableCell className="p-3">
-                        {getStatusBadge(b.status)}
-                      </TableCell>
-                      <TableCell className="p-3 text-center">
-                        <div className="flex flex-col items-center justify-center gap-2">
+                  paginatedBookings.map((b) => {
+                    const assignmentInfo = canAssignBooking(b);
+                    return (
+                      <TableRow key={b.bookingId} className="hover:bg-gray-50">
+                        <TableCell className="p-3 text-sm font-medium text-gray-900">{b.bookingId}</TableCell>
+                        <TableCell className="hidden md:table-cell p-3">
+                          <div className="text-sm font-medium text-gray-900">{b.customerName}</div>
+                          <div className="text-sm text-gray-500">{b.customerEmail}</div>
+                        </TableCell>
+                        <TableCell className="hidden p-3 text-sm text-gray-700">
+                          <div>{b.customerPhone || "—"}</div>
+                          <div className="text-gray-500">{b.customerEmail}</div>
+                        </TableCell>
+                        <TableCell className="hidden p-3 text-sm text-gray-700">
+                          <div>{b.customerAddress || "-"}</div>
+                          <div className="text-gray-500">{b.customerCity || "-"}</div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell p-3 text-sm text-gray-700">
+                          {b.serviceArea?.areaName || "-"}
+                        </TableCell>
+                        <TableCell className="hidden p-3 text-sm text-gray-700">
+                          {b.serviceType?.name || "-"}
+                        </TableCell>
+                        <TableCell className="hidden p-3 text-sm text-gray-700">{frequencyLabel(b)}</TableCell>
+                        <TableCell className="hidden p-3 text-sm text-gray-700">{optionsSummary(b) || "-"}</TableCell>
+                        <TableCell className="hidden sm:table-cell p-3 text-sm text-gray-900">
+                          {new Date(b.serviceDate).toLocaleDateString()}{" "}
+                          {new Date(b.serviceDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        </TableCell>
+                        <TableCell className="p-3">
+                          {getStatusBadge(b.status)}
+                        </TableCell>
+                        <TableCell className="p-3 text-center">
+                          <div className="flex flex-col items-center justify-center gap-2">
                             <button
                               onClick={() => { setSelectedBooking(b); setIsDetailModalOpen(true); }}
                               className="inline-flex items-center justify-center px-3 py-1 text-sm font-medium text-blue-700 bg-blue-100 rounded-md hover:bg-blue-200"
                             >
                               <FiEye className="w-3 h-3 mr-1" /> View
                             </button>
-                            <button
-                              onClick={() => { setSelectedForAssign(b); setIsAssignModalOpen(true); setSelectedCleanerId(""); }}
-                              className="inline-flex items-center justify-center px-3 py-1 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
-                            >
-                              {b.assignedCleanerId ? "Reassign" : "Assign"}
-                            </button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                            {assignmentInfo.canAssign && (
+                              <button
+                                onClick={() => { setSelectedForAssign(b); setIsAssignModalOpen(true); setSelectedCleanerId(""); }}
+                                className="inline-flex items-center justify-center px-3 py-1 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
+                              >
+                                {assignmentInfo.buttonText}
+                              </button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>

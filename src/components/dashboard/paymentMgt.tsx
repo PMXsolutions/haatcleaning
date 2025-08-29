@@ -421,8 +421,6 @@ export default PaymentManagement
 // TODO - work on filter status in payments page
 // TODO:- filter cleaners (assigned and available, if possible)
 // TODO:- edit and remove cleaners
-// TODO:- filter status in bookings
-// TODO:- when status is confirmed change assign to reassign, when status is complete remove assign button
 // TODO:- recent activity in dashboardhome should show latest 5 bookings
 // TODO:- total booking, active cleaners, service areas should work.
 // TODO:- remove revenue
